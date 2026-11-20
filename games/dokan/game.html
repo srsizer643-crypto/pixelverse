@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<!-- دكان السعادة | الإصدار v6 | تاريخ التحديث 2026-11-13 -->
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>دكان السعادة 🇪🇬 | لعبة إدارة محل عصير قصب</title>
+<meta name="description" content="دكان السعادة: لعبة إدارة محل عصير قصب بالعربي. خدّم الزباين، وظّف عمال، وطوّر محلك. العب مجاناً من الموبايل.">
+<meta property="og:site_name" content="دكان السعادة"><meta property="og:title" content="دكان السعادة 🇪🇬 | لعبة إدارة محل عصير قصب"><meta property="og:description" content="خدّم الزباين، وظّف عمال، وطوّر محلك. العب مجاناً من الموبايل."><meta property="og:url" content="https://srsizer643-crypto.github.io/g3an_3tshan/game.html"><meta property="og:image" content="https://srsizer643-crypto.github.io/g3an_3tshan/og-dokan.png?v=8"><meta property="og:image:type" content="image/png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:image:alt" content="دكان السعادة – لعبة إدارة محل قصب بالمصري"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="دكان السعادة 🇪🇬 | لعبة إدارة محل عصير قصب"><meta name="twitter:description" content="خدّم الزباين، وظّف عمال، وطوّر محلك. العب مجاناً من الموبايل."><meta name="twitter:image" content="https://srsizer643-crypto.github.io/g3an_3tshan/og-dokan.png?v=8"><meta property="og:type" content="website"><meta property="og:locale" content="ar_EG">
+<meta name="theme-color" content="#31200f"><link rel="icon" type="image/png" sizes="512x512" href="icon.png?v=8"><link rel="apple-touch-icon" href="icon.png?v=8"><meta name="apple-mobile-web-app-title" content="دكان السعادة"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%23c26a0e'/%3E%3Ctext x='50' y='72' font-size='60' text-anchor='middle'%3E%F0%9F%8F%AA%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="game.css?v=8">
+</head>
+<body>
+<div id="upgradeToast"></div>
+<div id="app">
+<div id="hud"><span id="hm"></span><span id="hs"></span><span id="hl"></span><span id="hp"></span><span id="hr" style="display:none"></span></div>
+<div id="hint">بانتظار الزبائن...</div>
+<div id="wrap"><canvas id="c"></canvas><div id="chat"><div id="chatList"></div><div id="hagBtns"><button id="hagYes">موافق</button><button id="hagNo">لأ يا باشا</button></div></div></div>
+<div id="bottomBar"><button id="btnTutorial" class="barbtn help">؟</button><button id="btnAch" class="barbtn ach" aria-label="الإنجازات"><i data-ic="trophy" data-s="22"></i></button><button id="btnMenu" class="barbtn"><i data-ic="menu" data-s="20"></i> القايمة</button><button id="btnWk" class="barbtn wk">العمال</button><button id="btnUpgrades" class="barbtn"><i data-ic="gear" data-s="20"></i> التطويرات</button></div>
+</div>
+<div id="upgradesOverlay" class="overlay">
+<div class="panel">
+<h2>التطويرات</h2>
+<div id="shop"></div>
+<button id="upgradesClose" class="panel-close">إغلاق</button>
+</div>
+</div>
+<div id="menuOverlay" class="overlay">
+<div class="panel">
+<h2>القايمة <i data-ic="menu" data-s="22"></i></h2>
+<div id="menuList"></div>
+<button id="menuClose" class="panel-close">إغلاق</button>
+</div>
+</div>
+<div id="wkOverlay" class="overlay"><div class="panel"><h2 id="wkTitle"></h2><div id="wkMoney" class="wmoney"></div><div id="wkList"></div><button id="wkClose" class="panel-close">إغلاق</button></div></div>
+<div id="achOverlay" class="overlay">
+<div class="panel">
+<h2 id="achTitle"></h2>
+<div id="achList"></div>
+<button id="achClose" class="panel-close">إغلاق</button>
+</div>
+</div>
+<div id="tutorialOverlay" class="overlay">
+<div class="panel">
+<h2>إزيك، عامل إيه؟ <i data-ic="cup" data-s="22"></i></h2>
+<p>في زبون واقف وجاهز؟ دوس عليه وهتتحرك على طول.</p>
+<p>هتجيب قصب، تعصره، تجيب كوب، وتسلّمه للزبون – وهتكسب فلوس كل مرة.</p>
+<p>أول ما تدوس على الزبون هيبدأ بينكم شات صغير، وبعدها يظهر شريط صبره جنبه. خدّمه بسرعة تاخد بقشيش، ولو خلص يمشي زعلان <i data-ic="angry" data-s="18"></i></p>
+<p>لما تجمع فلوس كفاية، دوس <i data-ic="gear" data-s="16" style="color:#ffc36b"></i> التطويرات تحت وطوّر سرعة العامل، العصّارة، أو السعر.</p>
+<p>من التطويرات اشتري <b>عامل مساعد</b> (لحد اتنين): كل واحد له طابور وعصّارة وبيخدم زباينه لوحده. وزر <b>العمال</b> البنفسجي تحت بتطوّر بيه سرعتهم وبقشيشهم.</p>
+<p>كل 25 كوباية بتطلع مستوى وبتفتح أصناف وتطويرات جديدة. خلّي بالك من ساعة الذروة، ومن الزباين اللي بيساوموا، وشوف <i data-ic="trophy" data-s="16"></i> الإنجازات.</p>
+<p>من <i data-ic="menu" data-s="16"></i> القايمة تقدر تفتح <b>مشروبات فاكهة</b> بفلوسك: ليمون، برتقال، مانجا، فراولة، وكوكتيل. كل مشروب ليه تكلفة إنتاج ووقت تحضير، وربحه أعلى من القصب.</p>
+<p>تايه في حاجة؟ دوس ؟ في أي وقت وهفكرك تاني.</p>
+<button id="tutorialClose" class="panel-close">يلا نبدأ</button>
+</div>
+</div>
+<script src="game.js?v=8"></script>
+</body>
+</html>
