@@ -1,0 +1,44 @@
+PixelVerse - دليل الرفع على GitHub Pages
+
+محتويات هذا الأرشيف جاهزة للرفع إلى جذر مستودع الموقع.
+بعد فك الضغط ستجد index.html والمجلدات assets وdata وpages مباشرة.
+
+1) افتح GitHub وأنشئ مستودعًا عامًا باسم:
+   srsizer643-crypto.github.io
+
+2) افتح المستودع > Add file > Upload files.
+3) فك ضغط هذا الأرشيف على هاتفك.
+4) ارفع كل المحتويات الموجودة بداخله مباشرة:
+   index.html
+   assets/
+   data/
+   pages/
+   README.txt
+   لا ترفع ملف ZIP نفسه، ولا ترفع مجلدًا أبًا يضم هذه الملفات.
+5) اضغط Commit changes.
+6) افتح Settings > Pages.
+7) اختر Deploy from a branch.
+8) اختر Branch: main و Folder: /(root)، ثم Save.
+9) انتظر حتى يكتمل النشر، ثم افتح:
+   https://srsizer643-crypto.github.io/
+
+إعداد GoatCounter:
+- افتح data/site.js.
+- ابحث عن stats: { goatcounter: "", dashboard: "" }
+- ضع اسم حساب GoatCounter في goatcounter فقط، أي الجزء الذي يسبق .goatcounter.com.
+- ضع رابط لوحة الإحصائيات في dashboard إذا أردت إظهار رابطها.
+- إذا لم تضبط الحساب، ستظهر رسالة أن الإحصائيات ستتوفر قريبًا.
+
+طريقة إضافة لعبة:
+- افتح data/site.js.
+- انسخ كائن لعبة داخل games وضع النسخة الجديدة في أول القائمة.
+- غيّر id و name و desc و cover و preview و page و embed و url والبيانات الأخرى.
+- تأكد أن رابط embed يعمل ويسمح بالتضمين داخل iframe.
+
+ملاحظات مهمة:
+- هذا الموقع يشغّل دكان السعادة داخل صفحة PixelVerse باستخدام iframe.
+- رابط اللعبة المضمّنة حاليًا:
+  https://srsizer643-crypto.github.io/g3an_3tshan/game.html
+- لا تحذف أو تستبدل مستودع g3an_3tshan. الموقع الجديد يجب أن يكون في مستودع منفصل.
+- ملفات اللعبة الأصلية لم تُضمّن في هذا الأرشيف؛ اللعبة تُحمّل من رابطها المنشور الحالي.
+- يجب اختبار الموقع بعد النشر على الهاتف، خصوصًا تشغيل iframe وملء الشاشة والإحصائيات.

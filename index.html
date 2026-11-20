@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>PixelVerse | من فكرة صغيرة إلى عالم ألعاب كبير</title>
+<meta name="description" content="PixelVerse منصة شخصية لعرض الألعاب التي أصنعها بنفسي: العب دكان السعادة، تابع التطويرات الأسبوعية وتواصل معي.">
+<meta name="theme-color" content="#070818">
+<link rel="canonical" href="https://srsizer643-crypto.github.io/">
+<meta property="og:type" content="website"><meta property="og:locale" content="ar_AR">
+<meta property="og:title" content="PixelVerse | من فكرة صغيرة إلى عالم ألعاب كبير">
+<meta property="og:description" content="ألعاب ومشاريع من صناعتي، يتم تطويرها باستمرار.">
+<meta property="og:image" content="https://srsizer643-crypto.github.io/g3an_3tshan/og-dokan.png?v=8">
+<link rel="icon" href="assets/images/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+<header class="nav"><nav>
+  <a href="#home" class="on">الرئيسية</a><a href="#games">الألعاب</a><a href="#weekly">التطويرات</a><a href="#platforms">منصاتي</a>
+</nav></header>
+
+<main>
+<section id="home" class="hero">
+  <img class="robot" src="assets/images/robot.webp" alt="روبوت PixelVerse" width="270" height="275" decoding="async">
+  <svg class="pad" viewBox="0 0 64 40" aria-hidden="true"><path d="M16 8h32a9 9 0 0 1 9 10l-2 14a6 6 0 0 1-11 2l-3-6H23l-3 6a6 6 0 0 1-11-2L7 18a9 9 0 0 1 9-10z" fill="none" stroke="currentColor" stroke-width="3"/><path d="M22 14v10M17 19h10" stroke="currentColor" stroke-width="3"/><circle cx="43" cy="16" r="2"/><circle cx="48" cy="21" r="2"/></svg>
+  <h1 class="logo" dir="ltr">PixelVerse</h1>
+  <p class="tag">من فكرة صغيرة إلى عالم ألعاب كبير</p>
+  <p class="sub">ألعاب ومشاريع من صناعتي، يتم تطويرها باستمرار.</p>
+
+  <div class="stats" id="stats">
+    <div><b id="sp">—</b><span>إجمالي مشاهدات الموقع</span></div>
+    <div class="spark"><svg id="chart" viewBox="0 0 120 40" preserveAspectRatio="none"></svg><span>آخر 7 أيام</span></div>
+    <p id="snote" class="snote"></p>
+  </div>
+</section>
+
+<section id="latest" class="card"><h2>أحدث لعبة</h2><div id="latestGame"></div></section>
+<section id="games"><h2>مكتبة الألعاب</h2><div id="gameGrid" class="grid"></div></section>
+<section id="weekly"><h2>التطويرات الأسبوعية</h2><div id="weeklyBox" class="card"></div></section>
+<section id="platforms"><h2>منصاتي</h2><div id="platList" class="plats"></div></section>
+</main>
+
+<footer>PixelVerse © <span id="yr"></span> — منصة شخصية مستقلة لعرض ألعابي.</footer>
+<script src="data/site.js"></script>
+<script src="assets/js/app.js" defer></script>
+</body>
+</html>
