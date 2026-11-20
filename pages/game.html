@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>لعبة | PixelVerse</title>
+<meta name="theme-color" content="#070818">
+<link rel="icon" href="../assets/images/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body class="gpage">
+<header class="nav"><nav>
+  <a href="../index.html#home">الرئيسية</a><a href="../index.html#games" class="on">الألعاب</a><a href="../index.html#weekly">التطويرات</a><a href="../index.html#platforms">منصاتي</a>
+</nav></header>
+
+<main>
+  <p id="gMissing" class="card" hidden>اللعبة دي مش موجودة. <a class="lnk" href="../index.html#games">ارجع لمكتبة الألعاب</a></p>
+
+  <section id="gInfo" class="gp" hidden>
+    <img id="gImg" class="gshot" alt="" width="420" height="760" decoding="async">
+    <div class="gtxt">
+      <div class="row"><h1 id="gName"></h1></div>
+      <div class="row" id="gBadges"></div>
+      <p id="gDesc" class="gdesc"></p>
+      <ul class="ginfo" id="gMeta"></ul>
+      <div class="row">
+        <button id="gPlay" class="btn big" type="button">تشغيل اللعبة</button>
+        <a class="btn ghost" href="../index.html#games">مكتبة الألعاب</a>
+      </div>
+      <p class="snote">تقدمك في اللعبة بيتحفظ تلقائي في متصفحك.</p>
+    </div>
+  </section>
+
+  <section id="gPlayer" class="player" hidden>
+    <div class="pbar">
+      <button id="pBack" type="button">رجوع</button>
+      <b id="pTitle"></b>
+      <button id="pFull" type="button">ملء الشاشة</button>
+    </div>
+    <div class="frame"><iframe id="gFrame" title="اللعبة" allow="fullscreen" referrerpolicy="no-referrer-when-downgrade"></iframe></div>
+    <p class="snote">اللعبة مش ظاهرة؟ <a id="pOpen" class="lnk" target="_blank" rel="noopener">افتحها في صفحة لوحدها</a> · <a class="lnk" href="../index.html#games">مكتبة الألعاب</a></p>
+  </section>
+</main>
+
+<footer>PixelVerse © <span id="yr"></span> — منصة شخصية مستقلة لعرض ألعابي.</footer>
+<script src="../data/site.js"></script>
+<script src="../assets/js/game-page.js" defer></script>
+</body>
+</html>
