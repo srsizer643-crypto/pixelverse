@@ -27,10 +27,11 @@
   <p class="tag">من فكرة صغيرة إلى عالم ألعاب كبير</p>
   <p class="sub">ألعاب ومشاريع من صناعتي، يتم تطويرها باستمرار.</p>
 
-  <div class="stats" id="stats">
-    <div><b id="sp">—</b><span>إجمالي مشاهدات الموقع</span></div>
-    <div class="spark"><svg id="chart" viewBox="0 0 120 40" preserveAspectRatio="none"></svg><span>آخر 7 أيام</span></div>
-    <p id="snote" class="snote"></p>
+  <div class="stats" id="stats" aria-live="polite">
+    <div class="stat"><b id="sp">—</b><span>إجمالي مشاهدات الموقع</span></div>
+    <div class="stat"><b id="sw">—</b><span>آخر 7 أيام</span></div>
+    <div class="spark" id="spark" hidden><div class="bars" id="bars"></div><span class="cap">المشاهدات اليومية</span></div>
+    <p id="snote" class="snote">جاري تحميل الإحصائيات…</p>
   </div>
 </section>
 
@@ -43,5 +44,6 @@
 <footer>PixelVerse © <span id="yr"></span> — منصة شخصية مستقلة لعرض ألعابي.</footer>
 <script src="data/site.js"></script>
 <script src="assets/js/app.js" defer></script>
+<script src="assets/js/stats.js" defer></script>
 </body>
 </html>
