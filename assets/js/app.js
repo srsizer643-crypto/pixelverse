@@ -36,24 +36,6 @@ if(W){
 
 $("yr").textContent=new Date().getFullYear();
 
-var S=D.stats||{},code=(S.goatcounter||"").trim(),note=$("snote");
-function num(v){return parseInt(String(v).replace(/\D/g,""),10)||0}
-function api(q){return fetch("https://"+code+".goatcounter.com/counter/TOTAL.json"+(q||"")).then(function(r){if(!r.ok)throw 0;return r.json()})}
-function ymd(d){return d.toISOString().slice(0,10)}
-if(!code){note.textContent="الإحصائيات ستتوفر قريبًا.";document.querySelector(".spark").hidden=true}
-else{
-  var s=document.createElement("script");s.async=true;s.dataset.goatcounter="https://"+code+".goatcounter.com/count";s.src="https://gc.zgo.at/count.js";document.head.append(s);
-  api().then(function(d){$("sp").textContent=num(d.count).toLocaleString("ar-EG")})
-   .catch(function(){note.textContent="تعذّر تحميل الإحصائيات الآن."});
-  var days=[];for(var k=6;k>=0;k--){var x=new Date();x.setDate(x.getDate()-k);days.push(ymd(x))}
-  Promise.allSettled(days.map(function(d){return api("?start="+d+"&end="+d)})).then(function(rs){
-    if(rs.every(function(r){return r.status!=="fulfilled"})){document.querySelector(".spark").hidden=true;return}
-    var v=rs.map(function(r){return r.status==="fulfilled"?num(r.value.count):0}),m=Math.max.apply(null,v)||1;
-    $("chart").innerHTML='<polyline points="'+v.map(function(y,i){return(i*20)+","+(36-y/m*32)}).join(" ")+'"/>';
-    $("chart").parentNode.querySelector("span").textContent="مشاهدات آخر 7 أيام: "+v.reduce(function(a,b){return a+b},0).toLocaleString("ar-EG")});
-  if(S.dashboard){var a=el("a","","لوحة الإحصائيات الكاملة");a.href=S.dashboard;a.target="_blank";a.rel="noopener";note.append(a)}
-}
-
 var links=[].slice.call(document.querySelectorAll(".nav a"));
 if("IntersectionObserver"in window){var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){links.forEach(function(a){a.classList.toggle("on",a.getAttribute("href")==="#"+e.target.id)})}})},{rootMargin:"-40% 0px -55% 0px"});
   ["home","games","weekly","platforms"].forEach(function(i){io.observe($(i))})}
