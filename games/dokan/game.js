@@ -1,9 +1,9 @@
-/* دكان السعادة | الإصدار v6 | تاريخ التحديث 2026-11-13 */
+/* دكان السعادة | الإصدار v7 | تاريخ التحديث 2026-11-24 */
 
-const W=420,H=540,$=id=>document.getElementById(id);
-const C=$('c');C.width=W*2;C.height=H*2;
+const W=420,H=540,DY=240,TH=H+DY,$=id=>document.getElementById(id); /* H=المحل القديم، DY=الجناح الجديد فوقه، TH=ارتفاع الكانفاس الكلي */
+const C=$('c');C.width=W*2;C.height=TH*2;
 let X=C.getContext('2d');
-const B=document.createElement('canvas');B.width=W*2;B.height=H*2;
+const B=document.createElement('canvas');B.width=W*2;B.height=TH*2;
 let S={money:0,sold:0,earned:0,tips:0,rushes:0,haggles:0,stock:0,lvSeen:1,by:{cane:0,lemon:0,iced:0,lemonj:0,orange:0,mango:0,straw:0,mix:0},ach:{},dr:{},u:{juice:0,speed:0,price:0,fridge:0,fan:0,lemon:0,ice:0,juice2:0,seats:0,sign:0,reg:0,big:0,hire:0}};
 try{const s=JSON.parse(localStorage.getItem('gaan_v1'));if(s&&s.u){S.money=+s.money||0;S.sold=+s.sold||0;S.earned=+s.earned||0;S.tips=+s.tips||0;S.rushes=+s.rushes||0;S.haggles=+s.haggles||0;S.stock=+s.stock||0;Object.assign(S.u,s.u);Object.assign(S.by,s.by||{});S.ach=s.ach||{};S.dr=s.dr||{};S.lvSeen=+s.lvSeen||(1+Math.floor(S.sold/25));S.stock=Math.min(S.stock,S.u.fridge||0)}}catch(e){}
 if(location.hash==='#demo'){S.money=9999;S.sold=300;S.lvSeen=13;Object.assign(S.u,{hire:2,fridge:3,seats:1,big:1,fan:2})}
@@ -75,9 +75,105 @@ function crate(x,y,w,h,fruit){
 }
 function sack(x,y){X.fillStyle='rgba(0,0,0,.2)';X.beginPath();X.ellipse(x+12,y+24,15,4,0,0,7);X.fill();rr(x,y+4,24,20,7,'#e7d9b4');X.fillStyle='#d4c294';X.beginPath();X.moveTo(x+5,y+5);X.lineTo(x+8,y);X.lineTo(x+16,y);X.lineTo(x+19,y+5);X.fill();R(x+7,y+3,10,2,'#8d6e63');rr(x+6,y+11,12,7,2,'#7cb342');R(x+8,y+14,8,1.5,'#fff')}
 
+/* ---------- توسعة المطعم (المرحلة 1): الجناح الخلفي = مطبخ مستقل + قسم السندوتشات ----------
+   المحل القديم بإحداثياته زي ما هو (y من 0 لـ 540) فمفيش حاجة في اللعب اتغيّرت.
+   الجناح الجديد فوقه بإحداثيات y سالبة (من -DY لـ 0)، والكانفاس بقى أطول بمقدار DY.
+   الدخول من باب في آخر الحيطة الخلفية يمين، وبعده ممر جنب صندوق القصب.
+   ZONES/SPOT/OBS/navPath: تجهيز للمرحلة الجاية (مش بتتستخدم في اللعب لسه). */
+const WY=y=>y-DY;
+const ZONES={kitchen:{x:0,y:WY(78),w:196,h:162,n:'المطبخ'},sandwich:{x:208,y:WY(78),w:212,h:162,n:'قسم السندوتشات'}};
+const SPOT={ // أماكن وقوف العامل (مكان القدمين) قدّام كل محطة
+  sink:{x:62,y:WY(150)},cleanPlates:{x:158,y:WY(150)},kitchenFloor:{x:104,y:WY(196)},
+  bread:{x:236,y:WY(150)},salad:{x:293,y:WY(150)},tahini:{x:350,y:WY(150)},prep:{x:262,y:WY(150)},
+  pass:{x:340,y:WY(218)},door:{x:403,y:20},corridor:{x:403,y:158}};
+const OBS=[ // أجسام صلبة (حيطان ومعدات). العامل ما يمرّش منها
+  {n:'حيطة الجناح',x:0,y:WY(0),w:W,h:78},
+  {n:'كاونتر المطبخ والحوض',x:8,y:WY(78),w:184,h:52},
+  {n:'فاصل المطبخ',x:196,y:WY(0),w:12,h:146},
+  {n:'كاونتر السندوتشات الخلفي',x:206,y:WY(78),w:174,h:52},
+  {n:'كاونتر تحضير السندوتشات',x:214,y:WY(160),w:158,h:46},
+  {n:'الحيطة الخلفية للمحل',x:0,y:0,w:386,h:80},{n:'حيطة يمين الباب',x:418,y:0,w:2,h:80},
+  {n:'كاونتر العصير الخلفي',x:0,y:84,w:330,h:52},
+  {n:'صندوق القصب',x:335,y:110,w:46,h:36},
+  {n:'ديكور شمال (ليمون وبراميل)',x:6,y:142,w:36,h:28},{n:'براميل',x:11,y:183,w:26,h:56},
+  {n:'سلة المهملات',x:10,y:WY(196),w:22,h:34},{n:'جردل المسح',x:42,y:WY(212),w:24,h:20},
+  {n:'كاونتر الخدمة',x:20,y:240,w:380,h:46}];
+const NAV={cs:5,pad:8};
+function navFree(x,y){const p=NAV.pad;if(x<p||x>W-p||y<-DY+p||y>H+80)return false;for(const o of OBS)if(x>o.x-p&&x<o.x+o.w+p&&y>o.y-p&&y<o.y+o.h+p)return false;return true}
+/* مسار بين نقطتين بيلف حوالين الحيطان والمعدات (شبكة 5 بكسل). بيرجع قايمة نقاط أو null لو مفيش طريق */
+function navPath(a,b){const cs=NAV.cs,cols=Math.ceil(W/cs),k=(x,y)=>Math.round((y+DY)/cs)*cols+Math.round(x/cs),pt=i=>({x:(i%cols)*cs,y:Math.floor(i/cols)*cs-DY});
+  const s=k(a.x,a.y),t=k(b.x,b.y);if(!navFree(pt(s).x,pt(s).y)||!navFree(pt(t).x,pt(t).y))return null;
+  const prev=new Map([[s,-1]]),q=[s];
+  for(let h=0;h<q.length;h++){const i=q[h];if(i===t)break;const p=pt(i);
+    for(const[dx,dy]of[[1,0],[-1,0],[0,1],[0,-1],[1,1],[1,-1],[-1,1],[-1,-1]]){const nx=p.x+dx*cs,ny=p.y+dy*cs,j=k(nx,ny);
+      if(prev.has(j)||!navFree(nx,ny))continue;
+      if(dx&&dy&&(!navFree(p.x+dx*cs,p.y)||!navFree(p.x,p.y+dy*cs)))continue;
+      prev.set(j,i);q.push(j)}}
+  if(!prev.has(t))return null;const out=[];for(let i=t;i!==-1;i=prev.get(i))out.push(pt(i));out.reverse();out[0]={x:a.x,y:a.y};out[out.length-1]={x:b.x,y:b.y};return out}
+
+/* رسم الجناح الجديد: بيتنادى جوه buildBG بإحداثيات محلية (y من 0 لـ 240) */
+function buildWing(){
+  const WD='#4a2c12',OR='#e9701e',CR='#fff3d6',GR='#2f7a4a',DKW='#2d1a09';
+  X.save();X.beginPath();X.rect(0,0,W,DY);X.clip();
+  // ===== الأرضيات =====
+  for(let ty=78,a=0;ty<DY;ty+=26,a++)for(let tx=0,b=0;tx<200;tx+=26,b++){const dk=(a+b)%2;R(tx,ty,26,26,dk?'#9fd3a4':'#f4ead0');R(tx,ty,26,1,'rgba(255,255,255,.55)');R(tx,ty,1,26,'rgba(255,255,255,.35)');R(tx+25,ty,1,26,'rgba(60,90,60,.25)');R(tx,ty+25,26,1,'rgba(60,90,60,.25)')}
+  for(let y=78,r=0;y<DY;y+=24,r++){R(200,y,W-200,24,r%2?'#c98a52':'#bd7d46');R(200,y+23,W-200,1,'rgba(60,30,10,.35)');for(let x=200+((r*47)%90);x<W;x+=90)R(x,y,1,24,'rgba(60,30,10,.28)');for(let k=0;k<3;k++)R(200+(r*37+k*83)%210,y+5+k*5,22,1,'rgba(255,255,255,.08)')}
+  R(198,146,4,94,'#cdb25a');R(198,146,1,94,'#f1de8a');
+  // ===== حيطان =====
+  R(0,0,196,78,'#f3efe2');for(let yy=9,r=0;yy<64;yy+=11,r++)for(let xx=(r%2)*12-12;xx<196;xx+=24){R(xx,yy,24,11,'#f6f2e6');R(xx,yy,24,1,'rgba(110,130,120,.28)');R(xx,yy,1,11,'rgba(110,130,120,.22)')}
+  R(0,62,196,3,GR);R(0,65,196,13,'#cfe3d2');for(let xx=0;xx<196;xx+=14)R(xx,65,1,13,'rgba(80,110,90,.25)');
+  R(208,0,W-208,78,'#eab25a');for(let yy=14,r=0;yy<58;yy+=14,r++)for(let xx=208+(r%2)*9;xx<W;xx+=18){X.fillStyle='rgba(255,236,190,.16)';X.beginPath();X.moveTo(xx+9,yy-4);X.lineTo(xx+13,yy);X.lineTo(xx+9,yy+4);X.lineTo(xx+5,yy);X.fill()}
+  R(208,9,W-208,3,'#8a5a2c');R(208,12,W-208,1,'rgba(255,255,255,.25)');R(208,58,W-208,3,'#6b4220');R(208,61,W-208,17,GR);for(let xx=208;xx<W;xx+=22){R(xx,61,1,17,'rgba(0,0,0,.18)');R(xx+1,61,1,17,'rgba(255,255,255,.08)')}
+  R(196,0,12,146,'#d8c9a0');R(196,0,2,146,'rgba(0,0,0,.14)');R(206,0,2,146,'rgba(255,255,255,.3)');R(194,140,16,8,WD);R(194,140,16,2,'#8a5a2c');
+  R(0,0,W,7,WD);R(0,7,W,2,DKW);
+  // ===== المطبخ =====
+  rr(12,14,104,42,4,WD);rr(15,17,98,36,3,'#7a4a24');R(15,36,98,2,'rgba(0,0,0,.25)');  // رف الأطباق المعلقة فوق الحوض
+  for(let i=0;i<6;i++){const cx=26+i*15;circ(cx+.6,32.4,9.5,'rgba(0,0,0,.25)');circ(cx,31,9,'#e8eef2');circ(cx,31,7.4,'#fbfdff');X.strokeStyle='#4a90c2';X.lineWidth=1.2;X.beginPath();X.arc(cx,31,6,0,7);X.stroke();X.strokeStyle='rgba(255,255,255,.95)';X.lineWidth=1;X.beginPath();X.arc(cx-1.6,29.6,3.6,3.6,5.2);X.stroke()}
+  R(15,41,98,2,'#b0bec5');const mc=['#e53935','#1e88e5','#fbc02d','#43a047','#8e24aa'];for(let i=0;i<5;i++){const mx=24+i*20;R(mx-1,43,1.6,3,'#90a4ae');rr(mx-4.5,45,9,8,2,mc[i]);R(mx-3,46,2,5,'rgba(255,255,255,.4)');X.strokeStyle=mc[i];X.lineWidth=1.4;X.beginPath();X.arc(mx+5,49,2.4,-1.5,1.5);X.stroke()}
+  rr(128,16,62,26,4,WD);rr(131,19,56,20,3,'#27703f');X.fillStyle=CR;X.font='bold 14px Tahoma,Arial';X.textAlign='center';X.direction='rtl';X.fillText('المطبخ',159,34);
+  // كاونتر المطبخ: حوض ستانلس على الشمال + منطقة الأطباق النظيفة على اليمين
+  R(8,80,184,34,'#d29a5f');R(8,80,184,3,'#e6b57c');R(8,114,184,16,'#7a4a24');R(8,114,184,3,'#4f2f14');for(let i=0;i<6;i++){R(14+i*30,119,22,8,'#8f5a2c');R(14+i*30,119,22,1,'rgba(255,255,255,.2)')}
+  R(8,80,110,34,'#cfd8dc');R(8,80,110,3,'#eceff1');rr(16,86,38,22,4,'#90a4ae');rr(18,88,34,18,3,'#607d8b');R(20,90,30,5,'rgba(142,202,230,.5)');rr(62,86,38,22,4,'#90a4ae');rr(64,88,34,18,3,'#607d8b');R(66,90,30,5,'rgba(142,202,230,.5)');circ(35,101,1.3,'#37474f');circ(81,101,1.3,'#37474f');
+  X.strokeStyle='#b0bec5';X.lineWidth=4;X.lineCap='round';X.beginPath();X.moveTo(58,84);X.lineTo(58,68);X.quadraticCurveTo(58,62,64,62);X.lineTo(69,62);X.quadraticCurveTo(74,62,74,67);X.lineTo(74,75);X.stroke();X.strokeStyle='rgba(255,255,255,.7)';X.lineWidth=1.2;X.beginPath();X.moveTo(57,82);X.lineTo(57,68);X.stroke();circ(52,83,2.6,'#e53935');circ(64,83,2.6,'#1e88e5');
+  rr(104,82,6,11,2,'#66bb6a');R(105,80,4,3,'#2e7d32');R(101,96,9,4,'#ffd54a');
+  rr(126,84,62,26,3,'#9aa7ae');rr(128,86,58,22,2,'#cfd8dc');for(let i=0;i<8;i++){R(132+i*6.6,88,3.2,17,'#fafcfe');R(132+i*6.6,88,3.2,2,'#bcd6ea');R(135+i*6.6,88,.6,17,'rgba(0,0,0,.18)')}R(128,96,58,1,'#90a4ae');   // رف الأطباق النضيفة
+  rr(179,108,11,16,1,'#fff');R(179,112,11,2,'#e53935');R(179,117,11,2,'#e53935');rr(134,118,34,10,3,'#27703f');X.fillStyle=CR;X.font='bold 8px Tahoma,Arial';X.fillText('أطباق نظيفة',150,126);
+  X.fillStyle=lg(0,130,0,146,['rgba(40,20,0,.28)','rgba(40,20,0,0)']);X.fillRect(8,130,184,16);
+  rr(14,134,92,14,4,'#37474f');for(let i=0;i<9;i++)for(let k=0;k<2;k++)circ(22+i*9.5,138+k*6,1.1,'#263238');   // مَطّاط الوقوف قدّام الحوض
+  rr(10,196,22,34,4,'#78909c');R(10,196,22,6,'#90a4ae');R(12,204,18,1,'rgba(255,255,255,.4)');R(18,214,6,10,'#b0bec5');circ(21,230,0,'#000');   // سلة مهملات
+  X.fillStyle='rgba(0,0,0,.2)';X.beginPath();X.ellipse(21,232,15,3.5,0,0,7);X.fill();rr(42,212,24,20,3,'#fbc02d');R(42,212,24,4,'#f9a825');R(44,228,20,2,'rgba(0,0,0,.18)');X.strokeStyle='#8d6e63';X.lineWidth=2.4;X.lineCap='round';X.beginPath();X.moveTo(62,214);X.lineTo(72,194);X.stroke();rr(66,188,13,8,2,'#eceff1');   // جردل ومقشة
+  // ===== قسم السندوتشات =====
+  rr(258,14,78,42,4,WD);rr(262,18,70,34,2,'#22432d');X.fillStyle=CR;X.font='bold 12px Tahoma,Arial';X.fillText('السندوتشات',297,32);R(270,36,54,1,'rgba(255,255,255,.4)');X.fillStyle='#ffb347';X.font='10px Tahoma,Arial';X.fillText('قريباً',297,48);
+  R(212,40,40,3,WD);R(212,43,40,1.5,'rgba(0,0,0,.25)');rr(216,29,26,12,3,'#b9803f');for(let i=0;i<3;i++){X.fillStyle='#e3b370';X.beginPath();X.ellipse(223+i*8,29,5,3.2,0,0,7);X.fill()}rr(244,31,6,10,2,'rgba(200,235,210,.85)');R(245,36,4,5,'#aed581');
+  const tag=(cx,t)=>{R(cx-8,52,1,7,'#6b4220');R(cx+7,52,1,7,'#6b4220');rr(cx-17,58,34,13,3,WD);rr(cx-15,60,30,9,2,'#f3e4bf');X.fillStyle=WD;X.font='bold 8.5px Tahoma,Arial';X.textAlign='center';X.direction='rtl';X.fillText(t,cx,67.5)};tag(236,'عيش');tag(293,'سلطة');tag(350,'طحينة');
+  R(206,80,174,34,'#d29a5f');R(206,80,174,3,'#e6b57c');R(206,83,174,1,'rgba(255,255,255,.35)');R(206,114,174,16,'#7a4a24');R(206,114,174,3,'#4f2f14');for(let i=0;i<5;i++){R(212+i*34,119,24,8,'#8f5a2c');R(212+i*34,119,24,1,'rgba(255,255,255,.2)')}
+  R(264,82,1,30,'rgba(80,40,10,.3)');R(324,82,1,30,'rgba(80,40,10,.3)');
+  rr(210,85,50,23,3,'#e6c48a');R(210,85,50,2,'#f3dba8');for(const[bx,by]of[[224,93],[246,93],[224,102],[246,102]]){X.fillStyle='rgba(60,30,10,.22)';X.beginPath();X.ellipse(bx,by+1.4,10.4,4.4,0,0,7);X.fill();X.fillStyle='#c98a45';X.beginPath();X.ellipse(bx,by,10,4.2,0,0,7);X.fill();X.fillStyle='#e8b56a';X.beginPath();X.ellipse(bx,by-.4,8.6,3.4,0,0,7);X.fill();circ(bx-3,by-.6,.8,'#a8672a');circ(bx+2,by+.6,.8,'#a8672a');circ(bx+4,by-1,.7,'#a8672a')}   // مكان رص العيش
+  rr(266,84,56,26,3,'#9aa7ae');rr(268,86,52,22,2,'#cfd8dc');for(let i=0;i<3;i++)rr(270+i*17,88,15,18,2,'#eceff1');   // صواني السلطة
+  X.fillStyle='#d32f2f';for(const[cx,cy]of[[277,93],[277,99],[274,96],[280,96]]){X.beginPath();X.arc(cx,cy,2.6,0,7);X.fill()}X.fillStyle='#ef9a9a';for(const[cx,cy]of[[276,92],[279,98]])circ(cx,cy,.9,X.fillStyle);
+  X.fillStyle='#66bb6a';X.beginPath();X.moveTo(289,104);X.lineTo(287,92);X.lineTo(294,90);X.lineTo(299,98);X.lineTo(297,104);X.fill();X.fillStyle='#a5d66a';X.beginPath();X.moveTo(292,104);X.lineTo(291,95);X.lineTo(296,94);X.lineTo(296,104);X.fill();
+  X.fillStyle='#b9d98c';for(const[cx,cy]of[[307,92],[312,92],[307,97],[312,97]]){X.beginPath();X.arc(cx,cy,2.6,0,7);X.fill();circ(cx,cy,1.2,'#e4f1c8')}X.fillStyle='#7a9a3a';X.beginPath();X.ellipse(309.5,102,4.5,2.2,.2,0,7);X.fill();R(276,83,1.4,8,'#8d6e63');R(293,83,1.4,8,'#8d6e63');
+  for(const bx of[336,357]){X.fillStyle='rgba(60,30,10,.22)';X.beginPath();X.ellipse(bx,100,11,6,0,0,7);X.fill();X.fillStyle='#f3e6c4';X.beginPath();X.ellipse(bx,98.5,10.5,6,0,0,7);X.fill();X.fillStyle='#e5d09a';X.beginPath();X.ellipse(bx,98,8.4,4.6,0,0,7);X.fill();X.strokeStyle='#f6ebc3';X.lineWidth=1.2;X.beginPath();X.ellipse(bx,98,5,2.5,0,0,5);X.stroke()}   // الطحينة
+  R(345,90,1.6,9,'#8d6e63');rr(369,88,7,17,2,'#fffde7');rr(370.5,84,4,5,1,'#fbc02d');R(371,94,4,3,'#f9a825');
+  // الكاونتر الأوسط: تحضير (شمال) + تقديم (يمين)
+  X.fillStyle='rgba(0,0,0,.22)';X.beginPath();X.ellipse(293,208,82,5,0,0,7);X.fill();
+  R(214,160,158,30,'#d9a86a');R(214,160,158,2,'#ecc895');for(let i=1;i<7;i++)R(214+i*22.5,162,1,28,'rgba(120,70,30,.25)');R(214,190,158,16,'#7a4a24');R(214,190,158,3,'#4f2f14');for(let i=0;i<4;i++){R(220+i*38,195,28,8,'#8f5a2c');R(220+i*38,195,28,1,'rgba(255,255,255,.2)')}
+  rr(222,164,34,20,2,'#f1e2bd');R(222,164,34,2,'#fff6da');R(228,173,18,2,'#cfd8dc');R(246,172.5,6,3,'#5d4037');rr(262,166,22,16,1,'#d8b878');R(262,169,22,1,'rgba(120,80,30,.35)');R(262,173,22,1,'rgba(120,80,30,.35)');R(262,177,22,1,'rgba(120,80,30,.35)');
+  R(302,162,3,26,'#c9a227');rr(308,164,60,22,3,'#b0bec5');rr(310,166,56,18,2,'#e3eaee');for(const px of[324,343]){X.fillStyle='rgba(0,0,0,.18)';X.beginPath();X.ellipse(px,176.6,11,5.6,0,0,7);X.fill();X.fillStyle='#fff';X.beginPath();X.ellipse(px,175.6,10.5,5.2,0,0,7);X.fill();X.strokeStyle='#4a90c2';X.lineWidth=1;X.beginPath();X.ellipse(px,175.6,7,3.2,0,0,7);X.stroke()}
+  X.fillStyle='#cfd8dc';X.beginPath();X.arc(359,177,5.5,Math.PI,0);X.fill();R(353,177,12,2,'#90a4ae');circ(359,170.8,1.3,'#eceff1');
+  rr(232,193,46,11,3,'#f3e4bf');X.fillStyle=WD;X.font='bold 9px Tahoma,Arial';X.fillText('تجهيز',255,201.5);rr(315,193,46,11,3,'#f3e4bf');X.fillStyle=WD;X.fillText('تقديم',338,201.5);
+  // ===== الممر والإضاءة =====
+  R(394,100,20,140,'#8c3b2a');R(396,100,16,140,'#a64b36');R(394,100,1,140,'#e6c15a');R(411,100,1,140,'#e6c15a');
+  R(401,19,4,4,'#b0bec5');rr(392,22,22,28,4,'#fff');R(392,31,22,2,'#ffb300');R(397,22,2,9,'#cfd8dc');R(407,22,2,9,'#cfd8dc');
+  for(const[lx,c]of[[100,'255,255,255'],[240,'255,225,150'],[330,'255,225,150']]){const g2=X.createRadialGradient(lx,120,4,lx,120,72);g2.addColorStop(0,'rgba('+c+',.18)');g2.addColorStop(1,'rgba('+c+',0)');X.fillStyle=g2;X.fillRect(lx-72,60,144,150)}
+  X.fillStyle=lg(0,214,0,DY,['rgba(40,20,0,0)','rgba(40,20,0,.34)']);X.fillRect(0,214,W,DY-214);
+  X.restore();
+}
+
 /* ---------- static shop background (drawn once) ---------- */
 function buildBG(){
-  const main=X;X=B.getContext('2d');X.setTransform(2,0,0,2,0,0);
+  const main=X;X=B.getContext('2d');X.setTransform(2,0,0,2,0,2*DY);
+  X.save();X.translate(0,-DY);buildWing();X.restore(); // الجناح الجديد (مطبخ + سندوتشات) فوق الحيطة الخلفية
   const WD='#4a2c12',OR='#e9701e',CR='#fff3d6',GR='#2f7a4a',hn=S.u.hire;
   // back wall: warm orange wallpaper + green wainscot
   R(0,0,W,58,'#e9923f');for(let i=0;i<W;i+=18)R(i,7,9,50,'rgba(255,255,255,.06)');
@@ -91,6 +187,12 @@ function buildBG(){
   R(0,59,W,18,lg(0,59,0,77,['#3a9459','#2f7a4a','#26683e']));
   for(let r=0;r<2;r++)for(let xx=(r?-11:0);xx<W;xx+=22){R(xx,59+r*9,22,1,'rgba(255,255,255,.22)');R(xx+21,59+r*9,1,9,'rgba(0,0,0,.2)');R(xx+1,60+r*9,20,1,'rgba(255,255,255,.1)')}
   R(0,68,W,1,'rgba(0,0,0,.22)');R(0,56,W,1,'rgba(255,255,255,.2)');
+  // باب الجناح الخلفي (المطبخ + السندوتشات) في آخر الحيطة يمين، وجنبه ممر بجانب صندوق القصب
+  R(384,0,36,80,'#2d1a09');R(390,13,26,67,'#8a5a2c');X.fillStyle=lg(0,13,0,80,['#3a2410','#a56d38']);X.fillRect(390,13,26,67);
+  for(let k=0;k<4;k++)R(390,20+k*16,26,1,'rgba(40,20,0,.35)');
+  R(394,13,18,67,'#8c3b2a');R(396,13,14,67,'#a64b36');R(394,13,1,67,'#e6c15a');R(411,13,1,67,'#e6c15a');
+  R(386,0,34,13,WD);R(386,12,34,2,'#2d1a09');rr(391,2,24,10,2,'#1f5a34');X.fillStyle=CR;X.font='bold 7.5px Tahoma,Arial';X.textAlign='center';X.direction='rtl';X.fillText('للعاملين',403,10);
+  R(384,0,3,80,'#6b4220');R(418,0,3,80,'#6b4220');
   // wooden plank floor
   for(let y=80,r=0;y<500;y+=24,r++){R(0,y,W,24,r%2?'#c98a52':'#bd7d46');R(0,y+23,W,1,'rgba(60,30,10,.35)');
     for(let x=((r*47)%90)-90;x<W;x+=90)R(x,y,1,24,'rgba(60,30,10,.28)');
@@ -100,6 +202,7 @@ function buildBG(){
   // kitchen tile zone behind the counter
   for(let ty=136,a=0;ty<240;ty+=26,a++)for(let tx=0,b=0;tx<W;tx+=26,b++){const dk=(a+b)%2;R(tx,ty,26,26,dk?'#9fd3a4':'#f4ead0');R(tx,ty,26,1,'rgba(255,255,255,.55)');R(tx,ty,1,26,'rgba(255,255,255,.35)');R(tx+25,ty,1,26,'rgba(60,90,60,.25)');R(tx,ty+25,26,1,'rgba(60,90,60,.25)');X.fillStyle='rgba(255,255,255,.14)';X.beginPath();X.moveTo(tx+3,ty+22);X.lineTo(tx+14,ty+3);X.lineTo(tx+18,ty+3);X.lineTo(tx+7,ty+22);X.fill()}
   R(0,136,W,2,'#7a4a24');
+  R(394,80,20,70,'#8c3b2a');R(396,80,16,70,'#a64b36');R(394,80,1,70,'#e6c15a');R(411,80,1,70,'#e6c15a');R(394,148,20,2,'rgba(0,0,0,.25)');
   // contact shadows under counters
   X.fillStyle=lg(0,138,0,156,['rgba(40,20,0,.32)','rgba(40,20,0,0)']);X.fillRect(0,138,330,18);
   X.fillStyle=lg(0,286,0,304,['rgba(40,20,0,.34)','rgba(40,20,0,0)']);X.fillRect(20,286,380,18);
@@ -119,7 +222,7 @@ function buildBG(){
   R(52,45,12,6,'#d9772b');circ(58,41,5,'#43a047');circ(54,43,3.5,'#66bb6a');
   for(let i=0;i<8;i++)R(8+i*8.5,8,8.5,10,i%2?CR:OR);
   for(let i=0;i<8;i++)circ(12.25+i*8.5,18,4.25,i%2?CR:OR);
-  X.save();X.translate(60,0);X.textAlign='center';X.direction='rtl';
+  X.save();X.translate(32,0);X.textAlign='center';X.direction='rtl';
   // menu chalkboard
   rr(284,10,68,44,4,WD);rr(288,14,60,36,2,'#22432d');
   X.fillStyle=CR;X.font='bold 11px Tahoma,Arial';X.fillText('عصير قصب',318,28);R(298,31,40,1,'rgba(255,255,255,.4)');X.fillStyle='#ffb347';X.font='10px Tahoma,Arial';X.fillText('طازة ولذيذ',318,43);
@@ -134,8 +237,8 @@ function buildBG(){
   X.restore();
   X.save();X.translate(323,0);X.textAlign='center';X.direction='rtl';
   // cane crate
-  for(let i=0;i<9;i++){const x0=20+i*8,tx=x0+(i-4)*2.5;X.strokeStyle='#8bc34a';X.lineWidth=5;X.lineCap='round';X.beginPath();X.moveTo(x0,122);X.lineTo(tx,82);X.stroke();X.strokeStyle='#558b2f';X.lineWidth=1.5;for(let k=0;k<4;k++){const f=.2+k*.22;const nx=x0+(tx-x0)*f,ny=122-40*f;X.beginPath();X.moveTo(nx-2.5,ny);X.lineTo(nx+2.5,ny);X.stroke()}}
-  rr(12,112,76,32,4,'#9a6430');for(let i=0;i<3;i++)R(14,118+i*8,72,1.5,'#6b4220');R(12,142,76,4,'rgba(0,0,0,.2)');rr(38,121,24,11,2,OR);
+  for(let i=0;i<6;i++){const x0=20+i*5.6,tx=x0+(i-2.5)*2.2;X.strokeStyle='#8bc34a';X.lineWidth=5;X.lineCap='round';X.beginPath();X.moveTo(x0,122);X.lineTo(tx,82);X.stroke();X.strokeStyle='#558b2f';X.lineWidth=1.5;for(let k=0;k<4;k++){const f=.2+k*.22;const nx=x0+(tx-x0)*f,ny=122-40*f;X.beginPath();X.moveTo(nx-2.5,ny);X.lineTo(nx+2.5,ny);X.stroke()}}
+  rr(12,112,46,32,4,'#9a6430');for(let i=0;i<3;i++)R(14,118+i*8,42,1.5,'#6b4220');R(12,142,46,4,'rgba(0,0,0,.2)');rr(24,121,22,11,2,OR);
   X.restore();
   R(20,240,380,24,'#d29a5f');R(20,240,380,3,'#e6b57c');R(20,264,380,22,'#7a4a24');R(20,264,380,3,'#4f2f14');
   for(let i=0;i<11;i++)R(32+i*34,272,22,9,'#8f5a2c');
@@ -164,7 +267,6 @@ function buildBG(){
   for(const px of [24,396]){R(px-9,412,18,16,'#d9772b');R(px-10,410,20,4,'#b85a18');circ(px,404,13,'#43a047');circ(px-6,398,8,'#66bb6a');circ(px+6,400,8,'#2e7d32')}
   X.restore();
   // wall decor: framed cane poster + small shelf
-  rr(314,15,26,34,3,WD);rr(317,18,20,28,2,'#f3e4bf');for(const dx of[-4,0,4]){X.strokeStyle='#7cb342';X.lineWidth=3;X.lineCap='round';X.beginPath();X.moveTo(327+dx,42);X.lineTo(327+dx*1.6,24);X.stroke()}R(320,41,14,2,'#b9803f');circ(327,22,0,'#000');
   R(77,41,31,3,WD);R(77,44,31,1.5,'rgba(0,0,0,.25)');circ(84,37,4,'#ffe14d');circ(91,38,3.4,'#ffd93a');rr(96,29,10,12,2,'rgba(200,235,210,.85)');R(97,35,8,6,'#aed581');R(96,27,10,3,'#8d6e63');
   // left side decor: crate of lemons + cane barrels (work area), sack
   crate(6,142,36,28,'lemon');barrel(24,196,13,true);barrel(24,226,13,false);
@@ -173,7 +275,7 @@ function buildBG(){
   // warm light pools over the counter
   for(const lx of[90,210,330]){const g2=X.createRadialGradient(lx,262,4,lx,262,70);g2.addColorStop(0,'rgba(255,225,150,.20)');g2.addColorStop(1,'rgba(255,225,150,0)');X.fillStyle=g2;X.fillRect(lx-70,200,140,130)}
   // soft vignette for a cozy feel
-  const g=X.createRadialGradient(W/2,H/2,H*.35,W/2,H/2,H*.78);g.addColorStop(0,'rgba(0,0,0,0)');g.addColorStop(1,'rgba(30,12,0,.38)');X.fillStyle=g;X.fillRect(0,0,W,H);
+  const g=X.createRadialGradient(W/2,(H-DY)/2,H*.35,W/2,(H-DY)/2,TH*.6);g.addColorStop(0,'rgba(0,0,0,0)');g.addColorStop(1,'rgba(30,12,0,.38)');X.fillStyle=g;X.fillRect(0,-DY,W,TH);
   X=main;
 }
 
@@ -597,7 +699,7 @@ function drawMachine(t,m,cx){X.save();X.translate((cx||160)-160,0);
     const h=14*m.glass;X.fillStyle=m.it==='mix'?lg(0,107,0,121,['#e5365a','#ff9a1f','#c6e03a']):(m.col||'#b5d94a');X.beginPath();X.moveTo(166-2*(1-m.glass)*0.1,121);X.lineTo(156,121);X.lineTo(156+(h<14?(14-h)*.14:0),121-h);X.lineTo(166-(h<14?(14-h)*.14:0),121-h);X.fill()}
 X.restore()}
 function draw(t){
-  X.setTransform(2,0,0,2,0,0);X.drawImage(B,0,0,W,H);
+  X.setTransform(2,0,0,2,0,2*DY);X.drawImage(B,0,-DY,W,TH);
   drawMachine(t,M,240);drawFridge();drawFruits();
   for(const h of HS())drawMachine(t,h.m,h.mx);
   const ents=[Wk].concat(HS(),cust).sort((a,b)=>a.y-b.y);
@@ -648,7 +750,7 @@ function drawFridge(){
   circ(43,90.5,1.8,fw?'#e53935':'#66bb6a');
   if(ft>0){R(17,115.5,26,2.2,'rgba(0,0,0,.3)');R(17,115.5,26*Math.min(1,ft),2.2,'#4dd0e1')}
 }
-function drawCoins(){for(const c of coins){if(c.t<0)continue;const p=c.t/c.d,e=p*p*(3-2*p),x=c.x0+(W-34-c.x0)*e,y=c.y0+(-14-c.y0)*e-Math.sin(Math.PI*p)*26,r=6-2*p;circ(x,y,r,'#c98b1f');circ(x,y,r*.78,'#ffc107');circ(x-r*.2,y-r*.2,r*.25,'#fff3b0')}}
+function drawCoins(){for(const c of coins){if(c.t<0)continue;const p=c.t/c.d,e=p*p*(3-2*p),x=c.x0+(W-34-c.x0)*e,y=c.y0+(-DY-14-c.y0)*e-Math.sin(Math.PI*p)*26,r=6-2*p;circ(x,y,r,'#c98b1f');circ(x,y,r*.78,'#ffc107');circ(x-r*.2,y-r*.2,r*.25,'#fff3b0')}}
 
 /* ---------- UI ---------- */
 const UP=[{k:'juice',n:'سرعة العصارة',b:40,lv:1},{k:'speed',n:'سرعة العامل',b:60,lv:1},{k:'price',n:'سعر الكوب',b:50,lv:1},{k:'fridge',n:'ثلاجة كوبايات جاهزة',b:120,lv:4,max:3},{k:'fan',n:'مروحة (صبر الزباين)',b:70,lv:5,max:5},
@@ -663,7 +765,7 @@ function refresh(){
   const hr=$('hr');if(RU.on){hr.style.display='';hr.innerHTML=ic('flame',18)+'<b>'+Math.ceil(RU.t)+'</b>'}else hr.style.display='none';
 }
 
-const Z={cane:{x:335,y:80,w:84,h:70},machine:{x:205,y:62,w:70,h:64},cups:{x:276,y:86,w:56,h:38},counter:{x:250,y:204,w:170,h:84}};
+const Z={cane:{x:332,y:80,w:54,h:70},machine:{x:205,y:62,w:70,h:64},cups:{x:276,y:86,w:56,h:38},counter:{x:250,y:204,w:170,h:84}};
 function talking(){const t=Wk.task;if(!t)return false;const c=t.c;if(c.hag&&c.hag.st!=='done')return true;return !!(isPrice(c)&&c.chat&&c.chat.t<c.chat.total)}
 function target(){const t=Wk.task;
   if(t&&talking())return{z:null,m:t.c.hag&&t.c.hag.st!=='done'?'الزبون بيساوم... استنى واختار من الشات':'الزبون بيسأل... استنى لما يخلص كلامه'};
@@ -677,7 +779,7 @@ function tap(x,y){const w=Wk,t=w.task,h=z=>x>=z.x&&x<=z.x+z.w&&y>=z.y&&y<=z.y+z.
   if(!t){const c=qList().find(c=>c.ready&&h({x:c.x-26,y:c.y-82,w:52,h:90}));if(c){w.item=c.item;if(cold(c.item))w.task={c,s:20,w:0};else if(S.stock>0){S.stock--;FR.t=0;w.carry='cup';w.task={c,s:10,w:0,fs:true}}else w.task={c,s:1,w:0};startChat(c)}return}
   if(talking())return;
   if(t.s===1&&h(Z.cane))t.s=2;else if(t.s===4&&h(Z.machine))t.s=5;else if(t.s===7&&h(Z.cups))t.s=8;else if(t.s===10&&h(Z.counter))t.s=11}
-C.addEventListener('pointerdown',ev=>{const r=C.getBoundingClientRect();tap((ev.clientX-r.left)/r.width*W,(ev.clientY-r.top)/r.height*H)});
+C.addEventListener('pointerdown',ev=>{const r=C.getBoundingClientRect();tap((ev.clientX-r.left)/r.width*W,(ev.clientY-r.top)/r.height*TH-DY)});
 $('btnUpgrades').addEventListener('click',()=>{refresh();$('upgradesOverlay').classList.add('show')});
 $('upgradesClose').addEventListener('click',()=>{$('upgradesOverlay').classList.remove('show')});
 $('upgradesOverlay').addEventListener('click',ev=>{if(ev.target===$('upgradesOverlay'))$('upgradesOverlay').classList.remove('show')});
