@@ -1,4 +1,4 @@
-/* دكان السعادة | الإصدار v8 | تاريخ التحديث 2026-11-24 */
+/* دكان السعادة | الإصدار v9 | تاريخ التحديث 2026-11-26 */
 (function(){
 'use strict';
 var play=document.getElementById('play'),frame=document.getElementById('frame'),

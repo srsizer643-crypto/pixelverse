@@ -1,11 +1,26 @@
-/* دكان السعادة | الإصدار v8 | تاريخ التحديث 2026-11-24 */
+/* دكان السعادة | الإصدار v9 | تاريخ التحديث 2026-11-26 */
 
 const W=420,H=540,DY=240,TH=H+DY,$=id=>document.getElementById(id); /* H=المحل القديم، DY=الجناح الجديد فوقه، TH=ارتفاع الكانفاس الكلي */
 const C=$('c');C.width=W*2;C.height=TH*2;
 let X=C.getContext('2d');
 const B=document.createElement('canvas');B.width=W*2;B.height=TH*2;
-let S={money:0,sold:0,earned:0,tips:0,rushes:0,haggles:0,stock:0,lvSeen:1,by:{cane:0,lemon:0,iced:0,lemonj:0,orange:0,mango:0,straw:0,mix:0,fool:0,fries:0},ing:{bread:0,beans:0,potato:0,salad:0,tahini:0},ach:{},dr:{},u:{store:0,juice:0,speed:0,price:0,fridge:0,fan:0,lemon:0,ice:0,juice2:0,seats:0,sign:0,reg:0,big:0,hire:0}};
-try{const s=JSON.parse(localStorage.getItem('gaan_v1'));if(s&&s.u){S.money=+s.money||0;S.sold=+s.sold||0;S.earned=+s.earned||0;S.tips=+s.tips||0;S.rushes=+s.rushes||0;S.haggles=+s.haggles||0;S.stock=+s.stock||0;Object.assign(S.u,s.u);Object.assign(S.by,s.by||{});S.ach=s.ach||{};S.dr=s.dr||{};S.lvSeen=+s.lvSeen||(1+Math.floor(S.sold/25));S.stock=Math.min(S.stock,S.u.fridge||0);if(s.ing)for(const k in S.ing)S.ing[k]=Math.max(0,Math.min(999,Math.floor(+s.ing[k]||0)))}}catch(e){}
+/* ---------- إعادة الضبط الإجبارية لتحديث v9 ----------
+   SAVE_VER = رقم إصدار بيانات الحفظ الحالي. أي حفظ قديم من قبل v9 (ماعندوش حقل ver، أو ver أقل) بيتعتبر "قديم":
+   بناخد نسخة منه في مفتاح تاني (مش بنمسحه خالص) وبعدين اللعبة بتبدأ من الصفر وكأنها أول مرة.
+   ده بيحصل مرة واحدة بس لكل لاعب: أول حفظ حقيقي بعد كده (أول عملية بيع أو شراء) بيبقى عليه ver:9،
+   فأي مرة بعد كده اللعبة بتلاقي ver:9 جاهز وبتكمل عادي من غير ما تصفّر حاجة تاني. */
+const SAVE_VER=9,OLD_BACKUP_KEY='gaan_v1_backup_preV9';
+let S={ver:SAVE_VER,money:0,sold:0,earned:0,tips:0,rushes:0,haggles:0,stock:0,lvSeen:1,by:{cane:0,lemon:0,iced:0,lemonj:0,orange:0,mango:0,straw:0,mix:0,fool:0,fries:0},ing:{bread:0,beans:0,potato:0,salad:0,tahini:0},ach:{},dr:{},u:{store:0,juice:0,speed:0,price:0,fridge:0,fan:0,lemon:0,ice:0,juice2:0,seats:0,sign:0,reg:0,big:0,hire:0}};
+try{
+  const raw=localStorage.getItem('gaan_v1'),s=raw?JSON.parse(raw):null;
+  if(s&&s.u){
+    if((+s.ver||0)>=SAVE_VER){ // حفظ من v9 (أو أحدث): كمّل بنفس التقدم عادي
+      S.money=+s.money||0;S.sold=+s.sold||0;S.earned=+s.earned||0;S.tips=+s.tips||0;S.rushes=+s.rushes||0;S.haggles=+s.haggles||0;S.stock=+s.stock||0;Object.assign(S.u,s.u);Object.assign(S.by,s.by||{});S.ach=s.ach||{};S.dr=s.dr||{};S.lvSeen=+s.lvSeen||level();S.stock=Math.min(S.stock,S.u.fridge||0);if(s.ing)for(const k in S.ing)S.ing[k]=Math.max(0,Math.min(999,Math.floor(+s.ing[k]||0)))
+    }else{ // حفظ من قبل v9: ناخد نسخة احتياطية (من غير ما نمسح الأصل) ونسيب S زي ما هي (بداية جديدة)
+      try{if(!localStorage.getItem(OLD_BACKUP_KEY))localStorage.setItem(OLD_BACKUP_KEY,raw)}catch(e2){}
+    }
+  }
+}catch(e){}
 if(location.hash==='#demo'){S.money=9999;S.sold=300;S.lvSeen=13;Object.assign(S.u,{hire:2,fridge:3,seats:1,big:1,fan:2,store:1});S.dr.fool=S.dr.fries=1;for(const k in S.ing)S.ing[k]=14}
 function save(){if(location.hash==='#demo')return;try{localStorage.setItem('gaan_v1',JSON.stringify(S))}catch(e){}}
 const IC={
@@ -528,7 +543,11 @@ const RU={on:false,t:0,next:70},FR={t:0};let coins=[];
 const WS=1.3,JSLOW=1.2,FT=.9,COLDPAT=8,cold=k=>!!(ITEMS[k]&&ITEMS[k].cold);
 const pat=it=>24+4*S.u.fan+(it==='iced'?3*S.u.ice+COLDPAT:0)+((ITEMS[it]&&ITEMS[it].pb)||0);
 let cust=[],pops=[],spawnT=.4,hudT=0,saveT=0;
-const juiceTime=()=>3.2*JSLOW*Math.pow(.82,S.u.juice)*Math.pow(.78,S.u.juice2),FRT=()=>juiceTime()/JSLOW*2.2,wkSpeed=()=>56*(1+.18*S.u.speed),price=()=>10+4*S.u.price,level=()=>1+Math.floor(S.sold/25);
+const juiceTime=()=>3.2*JSLOW*Math.pow(.82,S.u.juice)*Math.pow(.78,S.u.juice2),FRT=()=>juiceTime()/JSLOW*2.2,wkSpeed=()=>56*(1+.18*S.u.speed),price=()=>10+4*S.u.price;
+/* تحديث v9: جدول تدرّج المستويات بدل "كل 25 بيعة". LV_NEED[i] = عدد البيعات التراكمي المطلوب للوصول للمستوى i+1 (المستوى 1 من الصفر).
+   بعد آخر رقم في الجدول، كل مستوى زيادة يحتاج 150 بيعة إضافية. ده يخلي الوصول للمستويات المتقدمة ياخد وقت أطول بكتير من v8. */
+const LV_NEED=[0,40,100,180,280,400];
+function level(){let lv=1;while(lv<LV_NEED.length&&S.sold>=LV_NEED[lv])lv++;if(lv===LV_NEED.length)lv+=Math.floor((S.sold-LV_NEED[LV_NEED.length-1])/150);return lv}
 const qL=l=>cust.filter(c=>c.st==='q'&&(c.lane||0)===l),qList=()=>qL(0);
 const pick=a=>a[Math.floor(Math.random()*a.length)];
 let coldRun=0;
@@ -565,7 +584,7 @@ function hagChoose(yes){const c=CH.c;if(!c||!c.hag||c.hag.st!=='ask')return;$('h
     if(Math.random()<.6)setTimeout(()=>addMsg(c,{w:0,t:'طيب ماشي، هدفع'}),600);
     else{setTimeout(()=>addMsg(c,{w:0,t:'خلاص مش هاخد، سلام'}),600);leave(c,false);CH.fin=2.6}}
   checkAch();save()}
-function serve(c){c.st='l';c.l=0;c.carry=ITEMS[c.item].sand?'sand':'cup';const p=c.pay||cPrice(c),r=c.pt/c.pm,tip=Math.ceil((r>.5?Math.ceil(p*.5):r>.25?Math.ceil(p*.25):0)*(RU.on?2:1)*(1+.2*S.u.reg)*(1+.15*(c.hb||0))*(c.item==='lemon'?1+.15*S.u.lemon:1));
+function serve(c){c.st='l';c.l=0;c.carry=ITEMS[c.item].sand?'sand':'cup';const p=c.pay||cPrice(c),r=c.pt/c.pm,tb=r>.6?Math.ceil(p*.18):r>.3?Math.ceil(p*.08):0,tm=(RU.on?1.5:1)*(1+.08*S.u.reg)*(1+.06*(c.hb||0))*(c.item==='lemon'?1+.06*S.u.lemon:1),tip=tb?Math.min(Math.ceil(tb*tm),Math.ceil(p*.35)):0; /* تحديث v9: بقشيش أقل ومحدود بحد أقصى 35% من سعر الطلب مهما كانت التطويرات */
   const pc=prodCost(c);S.money+=p+tip-pc;S.earned+=p+tip-pc;S.sold++;S.by[c.item]=(S.by[c.item]||0)+1;if(tip)S.tips++;
   pops.push({x:c.x,y:c.y-70,t:0,k:'sale',n:p-pc});
   for(let i=0;i<(tip?6:4);i++)coins.push({x0:c.x,y0:c.y-70,t:-i*.07,d:.85});
@@ -612,7 +631,7 @@ function update(dt){
 /* ---------- v8: المكونات وتحضير السندوتشات ----------
    دورة الشغل: الزبون يطلب ← الطلب يظهر على لوحة السندوتشات ← العامل يمشي (navPath) على محطة العيش ← الفول أو البطاطس ←
    السلطة ← الطحينة ← منطقة التقديم ← يمشي من الباب والممر لحد الكاونتر ويسلّم. محطة التحضير بتشتغل عامل واحد في المرة. */
-const ING={bread:{n:'عيش',u:.12,i:'bread'},beans:{n:'فول',u:.25,i:'bean'},potato:{n:'بطاطس',u:.35,i:'fries'},salad:{n:'سلطة',u:.15,i:'salad'},tahini:{n:'طحينة',u:.13,i:'tahini'}},ING_ORDER=['bread','beans','potato','salad','tahini'];
+const ING={bread:{n:'عيش',u:.14,i:'bread'},beans:{n:'فول',u:.30,i:'bean'},potato:{n:'بطاطس',u:.40,i:'fries'},salad:{n:'سلطة',u:.18,i:'salad'},tahini:{n:'طحينة',u:.16,i:'tahini'}},ING_ORDER=['bread','beans','potato','salad','tahini'];
 const stCap=()=>12+8*S.u.store,ingUnit=k=>Math.max(1,Math.round(price()*ING[k].u)),sandCost=k=>ITEMS[k].ing.reduce((a,i)=>a+ingUnit(i),0);
 const sandOpen=()=>!!(S.dr.fool||S.dr.fries),needIng=k=>k==='beans'?!!S.dr.fool:k==='potato'?!!S.dr.fries:sandOpen();
 const swMissing=it=>ITEMS[it].ing.filter(k=>S.ing[k]<1);
@@ -883,7 +902,7 @@ function drawFridge(){
 function drawCoins(){for(const c of coins){if(c.t<0)continue;const p=c.t/c.d,e=p*p*(3-2*p),x=c.x0+(W-34-c.x0)*e,y=c.y0+(-DY-14-c.y0)*e-Math.sin(Math.PI*p)*26,r=6-2*p;circ(x,y,r,'#c98b1f');circ(x,y,r*.78,'#ffc107');circ(x-r*.2,y-r*.2,r*.25,'#fff3b0')}}
 
 /* ---------- UI ---------- */
-const UP=[{k:'juice',n:'سرعة العصارة',b:40,lv:1},{k:'speed',n:'سرعة العامل',b:60,lv:1},{k:'price',n:'سعر الكوب',b:50,lv:1},{k:'fridge',n:'ثلاجة كوبايات جاهزة',b:120,lv:4,max:3},{k:'fan',n:'مروحة (صبر الزباين)',b:70,lv:5,max:5},
+const UP=[{k:'juice',n:'سرعة العصارة',b:40,lv:1,max:6},{k:'speed',n:'سرعة العامل',b:60,lv:1,max:6},{k:'price',n:'سعر الكوب',b:50,lv:1,max:6},{k:'fridge',n:'ثلاجة كوبايات جاهزة',b:120,lv:4,max:3},{k:'fan',n:'مروحة (صبر الزباين)',b:70,lv:5,max:5},
 {k:'lemon',n:'ليمون طازة',d:'سعر وبقشيش بليمون',b:80,lv:2,max:5},{k:'ice',n:'تلج أكتر',d:'سعر وصبر الساقع',b:100,lv:3,max:5},{k:'juice2',n:'عصّارة تانية',d:'عصر أسرع بكتير',b:150,lv:3,max:4},
 {k:'sign',n:'لافتة أحلى',d:'زباين أكتر',b:130,lv:4,max:5},{k:'reg',n:'ماكينة حاسبة',d:'بقشيش أكتر',b:140,lv:4,max:5},{k:'seats',n:'كراسي الزباين',d:'مكان زيادة في الطابور',b:200,lv:5,max:1},{k:'big',n:'كوباية كبيرة',d:'حجم كبير بسعر أعلى',b:250,lv:5,max:1},
 {k:'hire',n:'عامل مساعد',d:'بيخدم طابور لوحده',b:300,lv:2,max:2},
@@ -940,7 +959,7 @@ $('menuList').addEventListener('click',ev=>{const sb=ev.target.closest('.wbuy[da
   if(!m||!m.cost||S.dr[k]||level()<m.lv||(m.need&&!S.dr[m.need])||S.money<m.cost)return;
   S.money-=m.cost;S.dr[k]=1;save();refresh();snd('up');toast(tt(m.i,'اتفتح: '+m.n,'الزباين هيبدأوا يطلبوه'),2800);checkAch();
   const pn=$('menuList').closest('.panel'),st=pn?pn.scrollTop:0;openMenu();if(pn)pn.scrollTop=st});
-const WU=[{k:'walk',n:'سرعة المشي',d:'سرعة أعلى 15% لكل مستوى',b:60},{k:'work',n:'سرعة الشغل',d:'تجهيز أسرع للقصب والأكواب',b:70},{k:'juice',n:'سرعة العصر',d:'وقت العصر أقل بنسبة 15%',b:80},{k:'tip',n:'ذوق في التعامل',d:'بقشيش أكتر بنسبة 15%',b:100},{k:'price',n:'قدرة على البيع',d:'سعر الكوب أعلى بنسبة 8%',b:120}];
+const WU=[{k:'walk',n:'سرعة المشي',d:'سرعة أعلى 15% لكل مستوى',b:60},{k:'work',n:'سرعة الشغل',d:'تجهيز أسرع للقصب والأكواب',b:70},{k:'juice',n:'سرعة العصر',d:'وقت العصر أقل بنسبة 15%',b:80},{k:'tip',n:'ذوق في التعامل',d:'بقشيش أكتر بنسبة 6%',b:100},{k:'price',n:'قدرة على البيع',d:'سعر الكوب أعلى بنسبة 8%',b:120}];
 let WT=0;const wlv=(i,k)=>S.u['w'+i+k]||0,wcost=(i,u)=>Math.floor(u.b*Math.pow(1.7,wlv(i,u.k)));
 function drawWk(){const n=S.u.hire;
   $('wkTitle').innerHTML='تطويرات العمال '+ic('gear',22);
