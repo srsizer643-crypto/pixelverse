@@ -20,8 +20,9 @@ if(games.length){
 var W=D.weekly,B=$("weeklyBox");
 if(W){
   var wk=el("div","wk"),r=el("div","row");
-  r.append(el("b","",W.game));if(W.week)r.append(el("span","badge","الأسبوع "+W.week));r.append(el("span","badge b-dev",W.status));
+  r.append(el("b","",W.game));if(W.week)r.append(el("span","badge","الأسبوع "+W.week));r.append(el("span","badge "+(W.status==="مكتمل"?"b-available":"b-dev"),W.status));
   wk.append(r,el("h3","",W.title),el("p","",W.description));
+  if(W.announce)wk.append(el("p","ann",W.announce));
   if(W.done&&W.done.length){wk.append(el("h4","","تم الانتهاء"));var u=el("ul");W.done.forEach(function(x){u.append(el("li","",x))});wk.append(u)}
   if(W.history&&W.history.length){wk.append(el("h4","","سجل التحديثات"));var h=el("div","hist");
     W.history.forEach(function(x){var d=el("div");d.append(el("b","",x.label+" "),el("small","",x.date||""),el("p","",x.text));h.append(d)});wk.append(h)}
