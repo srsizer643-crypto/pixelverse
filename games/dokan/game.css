@@ -1,4 +1,4 @@
-/* دكان السعادة | الإصدار v7 | تاريخ التحديث 2026-11-24 */
+/* دكان السعادة | الإصدار v8 | تاريخ التحديث 2026-11-24 */
 
 :root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:dark;
   --ink:#1f130a;--panel:#3d2614;--panel2:#31200f;--gold:#ff9a2e;--gold-d:#c26a0e;--gold-l:#ffc36b;--cane:#7cb342;--cane-d:#558b2f;--cream:#ffe8c8}
@@ -72,3 +72,12 @@ i[data-ic]{display:inline-block;font-style:normal;line-height:0;vertical-align:m
 .pips{display:flex;gap:4px;margin-top:6px}.pips i{width:16px;height:6px;border-radius:3px;background:rgba(255,255,255,.18)}.pips i.on{background:var(--cane)}
 .wbuy{border:0;border-radius:10px;padding:9px 8px;min-width:66px;font:700 13px Tahoma,Arial,sans-serif;background:linear-gradient(180deg,#ffc94a,var(--gold));color:#3a2000;box-shadow:0 2px 0 var(--gold-d)}.wbuy:disabled{opacity:.45}.wbuy:active:not(:disabled){transform:scale(.95)}
 #wkList{max-height:56vh;overflow-y:auto;touch-action:pan-y}
+
+/* v8: مخزن المكونات في القايمة */
+.menu-h{margin:12px 2px 8px;color:var(--gold-l,#ffd54a);font-weight:700;font-size:15px;display:flex;justify-content:space-between;align-items:center}.menu-h small{font-weight:400;font-size:12px;opacity:.85}
+.stk{background:rgba(0,0,0,.22);border-right:4px solid #ffb347;border-radius:10px;padding:8px 10px;margin-bottom:8px}
+.stk-h{display:flex;justify-content:space-between;align-items:center;font-weight:700;font-size:14px}.stk-h span{display:inline-flex;align-items:center;gap:8px}.stk-h b{color:var(--gold-l,#ffd54a)}
+.stk-bar{height:7px;border-radius:4px;background:rgba(255,255,255,.14);margin:6px 0 8px;overflow:hidden}.stk-bar i{display:block;height:100%;background:#7cb342;border-radius:4px;transition:width .3s}.stk-bar i.low{background:#ffb300}.stk-bar i.out{background:#e53935}
+.stk-b{display:flex;gap:8px}.stk-b .wbuy{flex:1;white-space:nowrap}
+.stk-n{font-size:13px;opacity:.85;margin:0 2px 8px}
+#hint.act{cursor:pointer;border-color:#ffb347}

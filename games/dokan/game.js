@@ -1,12 +1,12 @@
-/* دكان السعادة | الإصدار v7 | تاريخ التحديث 2026-11-24 */
+/* دكان السعادة | الإصدار v8 | تاريخ التحديث 2026-11-24 */
 
 const W=420,H=540,DY=240,TH=H+DY,$=id=>document.getElementById(id); /* H=المحل القديم، DY=الجناح الجديد فوقه، TH=ارتفاع الكانفاس الكلي */
 const C=$('c');C.width=W*2;C.height=TH*2;
 let X=C.getContext('2d');
 const B=document.createElement('canvas');B.width=W*2;B.height=TH*2;
-let S={money:0,sold:0,earned:0,tips:0,rushes:0,haggles:0,stock:0,lvSeen:1,by:{cane:0,lemon:0,iced:0,lemonj:0,orange:0,mango:0,straw:0,mix:0},ach:{},dr:{},u:{juice:0,speed:0,price:0,fridge:0,fan:0,lemon:0,ice:0,juice2:0,seats:0,sign:0,reg:0,big:0,hire:0}};
-try{const s=JSON.parse(localStorage.getItem('gaan_v1'));if(s&&s.u){S.money=+s.money||0;S.sold=+s.sold||0;S.earned=+s.earned||0;S.tips=+s.tips||0;S.rushes=+s.rushes||0;S.haggles=+s.haggles||0;S.stock=+s.stock||0;Object.assign(S.u,s.u);Object.assign(S.by,s.by||{});S.ach=s.ach||{};S.dr=s.dr||{};S.lvSeen=+s.lvSeen||(1+Math.floor(S.sold/25));S.stock=Math.min(S.stock,S.u.fridge||0)}}catch(e){}
-if(location.hash==='#demo'){S.money=9999;S.sold=300;S.lvSeen=13;Object.assign(S.u,{hire:2,fridge:3,seats:1,big:1,fan:2})}
+let S={money:0,sold:0,earned:0,tips:0,rushes:0,haggles:0,stock:0,lvSeen:1,by:{cane:0,lemon:0,iced:0,lemonj:0,orange:0,mango:0,straw:0,mix:0,fool:0,fries:0},ing:{bread:0,beans:0,potato:0,salad:0,tahini:0},ach:{},dr:{},u:{store:0,juice:0,speed:0,price:0,fridge:0,fan:0,lemon:0,ice:0,juice2:0,seats:0,sign:0,reg:0,big:0,hire:0}};
+try{const s=JSON.parse(localStorage.getItem('gaan_v1'));if(s&&s.u){S.money=+s.money||0;S.sold=+s.sold||0;S.earned=+s.earned||0;S.tips=+s.tips||0;S.rushes=+s.rushes||0;S.haggles=+s.haggles||0;S.stock=+s.stock||0;Object.assign(S.u,s.u);Object.assign(S.by,s.by||{});S.ach=s.ach||{};S.dr=s.dr||{};S.lvSeen=+s.lvSeen||(1+Math.floor(S.sold/25));S.stock=Math.min(S.stock,S.u.fridge||0);if(s.ing)for(const k in S.ing)S.ing[k]=Math.max(0,Math.min(999,Math.floor(+s.ing[k]||0)))}}catch(e){}
+if(location.hash==='#demo'){S.money=9999;S.sold=300;S.lvSeen=13;Object.assign(S.u,{hire:2,fridge:3,seats:1,big:1,fan:2,store:1});S.dr.fool=S.dr.fries=1;for(const k in S.ing)S.ing[k]=14}
 function save(){if(location.hash==='#demo')return;try{localStorage.setItem('gaan_v1',JSON.stringify(S))}catch(e){}}
 const IC={
 coin:'<circle cx="12" cy="12" r="11" fill="#c98b1f"/><circle cx="12" cy="12" r="9" fill="#ffc107"/><text x="12" y="16.5" text-anchor="middle" font-size="12" font-weight="700" font-family="Tahoma,Arial" fill="#7a4a00">ج</text>',
@@ -27,7 +27,14 @@ lemonj:'<path d="M5 7h14l-1.8 14H6.8z" fill="#fff" fill-opacity=".92"/><path d="
 orange:'<circle cx="12" cy="13.5" r="8.5" fill="#ff9800" stroke="#e65100" stroke-width="1.2"/><path d="M12 5.2c.9-2.2 3-3.2 5.2-3.2-.8 2.2-2.4 3.3-5.2 3.2z" fill="#66bb6a"/><path d="M7.6 12c.5-1.7 1.9-2.8 3.4-3" stroke="#ffd180" stroke-width="1.7" fill="none" stroke-linecap="round"/>',
 mango:'<path d="M4.5 14.5c0-5.5 4-9.5 9.5-9.5 3.7 0 6.2 2.6 6.2 6.2 0 5.8-5.2 9.8-10.4 9.8-3.2 0-5.3-2.2-5.3-6.5z" fill="#ffb300" stroke="#e65100" stroke-width="1.2"/><path d="M14 5c.8-2.1 2.7-3.2 4.8-3.2-.6 2.1-2.1 3.3-4.8 3.2z" fill="#66bb6a"/><path d="M12.5 17.5c2.4-.4 4.4-2 5.2-4.5" stroke="#ef5350" stroke-width="2.6" fill="none" stroke-linecap="round" opacity=".65"/>',
 straw:'<path d="M12 21.5C5.8 17.5 3.8 12.4 5.4 9.2c1.5-3 4.2-2.6 6.6-1.6 2.4-1 5.1-1.4 6.6 1.6 1.6 3.2-.4 8.3-6.6 12.3z" fill="#e53958" stroke="#b71c3c" stroke-width="1"/><path d="M6.8 7.2c1.8-2 3.4-2.4 5.2-1.2 1.8-1.2 3.4-.8 5.2 1.2-1.9.5-3.5.2-5.2-.7-1.7.9-3.3 1.2-5.2.7z" fill="#43a047"/><g fill="#ffe082"><circle cx="9.3" cy="12" r=".9"/><circle cx="14.7" cy="11.6" r=".9"/><circle cx="12" cy="15" r=".9"/><circle cx="10.4" cy="9.6" r=".8"/><circle cx="13.8" cy="8.9" r=".8"/></g>',
-mix:'<path d="M4 6h16l-2 14.2a1.5 1.5 0 01-1.5 1.3h-9A1.5 1.5 0 016 20.2z" fill="#fff" fill-opacity=".92"/><path d="M4.7 9.5h14.6l-.5 3.7H5.2z" fill="#e5365a"/><path d="M5.2 13.2h13.6l-.6 3.8H5.8z" fill="#ff9a1f"/><path d="M5.8 17h12.4l-.4 3a1.2 1.2 0 01-1.2 1H7.4a1.2 1.2 0 01-1.2-1z" fill="#c6e03a"/><path d="M15 6.5l2.6-5" stroke="#7e57c2" stroke-width="1.8" stroke-linecap="round"/><circle cx="7.8" cy="5.2" r="2.3" fill="#d50000"/>'};
+mix:'<path d="M4 6h16l-2 14.2a1.5 1.5 0 01-1.5 1.3h-9A1.5 1.5 0 016 20.2z" fill="#fff" fill-opacity=".92"/><path d="M4.7 9.5h14.6l-.5 3.7H5.2z" fill="#e5365a"/><path d="M5.2 13.2h13.6l-.6 3.8H5.8z" fill="#ff9a1f"/><path d="M5.8 17h12.4l-.4 3a1.2 1.2 0 01-1.2 1H7.4a1.2 1.2 0 01-1.2-1z" fill="#c6e03a"/><path d="M15 6.5l2.6-5" stroke="#7e57c2" stroke-width="1.8" stroke-linecap="round"/><circle cx="7.8" cy="5.2" r="2.3" fill="#d50000"/>',
+ sand:'<path d="M3 13h18v2.5a2.5 2.5 0 01-2.5 2.5h-13A2.5 2.5 0 013 15.5z" fill="#d9a05b"/><path d="M3.5 12.4c.6-4 4.2-6.4 8.5-6.4s7.9 2.4 8.5 6.4z" fill="#e8b56a"/><path d="M4 12.8h16" stroke="#7cb342" stroke-width="2.2"/><path d="M5 14.8h14" stroke="#6d4020" stroke-width="1.8"/>',
+ bread:'<ellipse cx="12" cy="13" rx="9.5" ry="6.5" fill="#e8b56a" stroke="#c98a45" stroke-width="1.2"/><circle cx="8.5" cy="12" r=".9" fill="#a8672a"/><circle cx="13" cy="14" r=".9" fill="#a8672a"/><circle cx="15.5" cy="11.5" r=".9" fill="#a8672a"/>',
+ bean:'<path d="M4 10h16l-1.6 9a2 2 0 01-2 1.6H7.6a2 2 0 01-2-1.6z" fill="#9aa7ae"/><ellipse cx="12" cy="10" rx="8" ry="2.6" fill="#7b4a1e"/><circle cx="9.5" cy="9.6" r=".9" fill="#a8703a"/><circle cx="13.5" cy="10.4" r=".9" fill="#a8703a"/><path d="M9 6c0-1.5 1-1.5 1-3M13 6c0-1.5 1-1.5 1-3" stroke="#fff" stroke-opacity=".7" fill="none" stroke-width="1.2" stroke-linecap="round"/>',
+ fries:'<path d="M6 12h12l-1.6 9H7.6z" fill="#e53935"/><g fill="#ffd54a" stroke="#e0a800" stroke-width=".6"><rect x="7" y="4" width="2.6" height="9" rx="1"/><rect x="10.3" y="2.5" width="2.6" height="10.5" rx="1"/><rect x="13.6" y="4.5" width="2.6" height="8.5" rx="1"/></g>',
+ salad:'<ellipse cx="12" cy="14" rx="9" ry="5.5" fill="#a5d66a" stroke="#558b2f" stroke-width="1.2"/><circle cx="9" cy="12.5" r="2.4" fill="#e53935"/><circle cx="15" cy="13.5" r="2" fill="#e53935"/><path d="M5 12.5c2-3 5-3.8 8-2.6" stroke="#dcedc8" stroke-width="1.4" fill="none" stroke-linecap="round"/>',
+ tahini:'<path d="M3.5 11h17a8.5 7 0 01-17 0z" fill="#f3e6c4" stroke="#c9a96a" stroke-width="1.2"/><ellipse cx="12" cy="11" rx="8.5" ry="2.4" fill="#e5d09a"/><path d="M7.5 10.8c2.2 1 6.8 1 9 0" stroke="#fff6d8" stroke-width="1.2" fill="none" stroke-linecap="round"/>',
+ box:'<rect x="3" y="8" width="18" height="12" rx="2" fill="#b9803f" stroke="#7a4a24" stroke-width="1.2"/><path d="M3 12h18M9 8v12M15 8v12" stroke="#7a4a24" stroke-width="1"/><path d="M6 8l2-4h8l2 4z" fill="#d9a05b"/>'};
 function ic(n,s){s=s||18;return '<svg class="ic" width="'+s+'" height="'+s+'" viewBox="0 0 24 24" aria-hidden="true">'+IC[n]+'</svg>'}
 document.querySelectorAll('i[data-ic]').forEach(e=>{e.innerHTML=ic(e.dataset.ic,+e.dataset.s||18)});
 let actx=null,toastT=null;
@@ -84,8 +91,8 @@ const WY=y=>y-DY;
 const ZONES={kitchen:{x:0,y:WY(78),w:196,h:162,n:'المطبخ'},sandwich:{x:208,y:WY(78),w:212,h:162,n:'قسم السندوتشات'}};
 const SPOT={ // أماكن وقوف العامل (مكان القدمين) قدّام كل محطة
   sink:{x:62,y:WY(150)},cleanPlates:{x:158,y:WY(150)},kitchenFloor:{x:104,y:WY(196)},
-  bread:{x:236,y:WY(150)},salad:{x:293,y:WY(150)},tahini:{x:350,y:WY(150)},prep:{x:262,y:WY(150)},
-  pass:{x:340,y:WY(218)},door:{x:403,y:20},corridor:{x:403,y:158}};
+  bread:{x:236,y:WY(146)},beans:{x:256,y:WY(146)},potato:{x:287,y:WY(146)},salad:{x:308,y:WY(146)},tahini:{x:350,y:WY(146)},prep:{x:270,y:WY(146)},
+  pass:{x:384,y:WY(198)},door:{x:403,y:20},corridor:{x:403,y:158}};
 const OBS=[ // أجسام صلبة (حيطان ومعدات). العامل ما يمرّش منها
   {n:'حيطة الجناح',x:0,y:WY(0),w:W,h:78},
   {n:'كاونتر المطبخ والحوض',x:8,y:WY(78),w:184,h:52},
@@ -109,7 +116,9 @@ function navPath(a,b){const cs=NAV.cs,cols=Math.ceil(W/cs),k=(x,y)=>Math.round((
       if(prev.has(j)||!navFree(nx,ny))continue;
       if(dx&&dy&&(!navFree(p.x+dx*cs,p.y)||!navFree(p.x,p.y+dy*cs)))continue;
       prev.set(j,i);q.push(j)}}
-  if(!prev.has(t))return null;const out=[];for(let i=t;i!==-1;i=prev.get(i))out.push(pt(i));out.reverse();out[0]={x:a.x,y:a.y};out[out.length-1]={x:b.x,y:b.y};return out}
+  if(!prev.has(t))return null;const out=[];for(let i=t;i!==-1;i=prev.get(i))out.push(pt(i));out.reverse();out[0]={x:a.x,y:a.y};out[out.length-1]={x:b.x,y:b.y};
+  const los=(p,q)=>{const d=Math.hypot(q.x-p.x,q.y-p.y);for(let u=4;u<d;u+=4)if(!navFree(p.x+(q.x-p.x)*u/d,p.y+(q.y-p.y)*u/d))return false;return true};
+  const sm=[out[0]];let i=0;while(i<out.length-1){let j=out.length-1;while(j>i+1&&!los(out[i],out[j]))j--;sm.push(out[j]);i=j}return sm}
 
 /* رسم الجناح الجديد: بيتنادى جوه buildBG بإحداثيات محلية (y من 0 لـ 240) */
 function buildWing(){
@@ -143,7 +152,7 @@ function buildWing(){
   rr(10,196,22,34,4,'#78909c');R(10,196,22,6,'#90a4ae');R(12,204,18,1,'rgba(255,255,255,.4)');R(18,214,6,10,'#b0bec5');circ(21,230,0,'#000');   // سلة مهملات
   X.fillStyle='rgba(0,0,0,.2)';X.beginPath();X.ellipse(21,232,15,3.5,0,0,7);X.fill();rr(42,212,24,20,3,'#fbc02d');R(42,212,24,4,'#f9a825');R(44,228,20,2,'rgba(0,0,0,.18)');X.strokeStyle='#8d6e63';X.lineWidth=2.4;X.lineCap='round';X.beginPath();X.moveTo(62,214);X.lineTo(72,194);X.stroke();rr(66,188,13,8,2,'#eceff1');   // جردل ومقشة
   // ===== قسم السندوتشات =====
-  rr(258,14,78,42,4,WD);rr(262,18,70,34,2,'#22432d');X.fillStyle=CR;X.font='bold 12px Tahoma,Arial';X.fillText('السندوتشات',297,32);R(270,36,54,1,'rgba(255,255,255,.4)');X.fillStyle='#ffb347';X.font='10px Tahoma,Arial';X.fillText('قريباً',297,48);
+  rr(258,14,78,42,4,WD);rr(262,18,70,34,2,'#22432d');X.fillStyle=CR;X.font='bold 12px Tahoma,Arial';X.font='bold 11px Tahoma,Arial';X.fillText('السندوتشات',297,30);R(270,33,54,1,'rgba(255,255,255,.4)');
   R(212,40,40,3,WD);R(212,43,40,1.5,'rgba(0,0,0,.25)');rr(216,29,26,12,3,'#b9803f');for(let i=0;i<3;i++){X.fillStyle='#e3b370';X.beginPath();X.ellipse(223+i*8,29,5,3.2,0,0,7);X.fill()}rr(244,31,6,10,2,'rgba(200,235,210,.85)');R(245,36,4,5,'#aed581');
   const tag=(cx,t)=>{R(cx-8,52,1,7,'#6b4220');R(cx+7,52,1,7,'#6b4220');rr(cx-17,58,34,13,3,WD);rr(cx-15,60,30,9,2,'#f3e4bf');X.fillStyle=WD;X.font='bold 8.5px Tahoma,Arial';X.textAlign='center';X.direction='rtl';X.fillText(t,cx,67.5)};tag(236,'عيش');tag(293,'سلطة');tag(350,'طحينة');
   R(206,80,174,34,'#d29a5f');R(206,80,174,3,'#e6b57c');R(206,83,174,1,'rgba(255,255,255,.35)');R(206,114,174,16,'#7a4a24');R(206,114,174,3,'#4f2f14');for(let i=0;i<5;i++){R(212+i*34,119,24,8,'#8f5a2c');R(212+i*34,119,24,1,'rgba(255,255,255,.2)')}
@@ -158,7 +167,12 @@ function buildWing(){
   // الكاونتر الأوسط: تحضير (شمال) + تقديم (يمين)
   X.fillStyle='rgba(0,0,0,.22)';X.beginPath();X.ellipse(293,208,82,5,0,0,7);X.fill();
   R(214,160,158,30,'#d9a86a');R(214,160,158,2,'#ecc895');for(let i=1;i<7;i++)R(214+i*22.5,162,1,28,'rgba(120,70,30,.25)');R(214,190,158,16,'#7a4a24');R(214,190,158,3,'#4f2f14');for(let i=0;i<4;i++){R(220+i*38,195,28,8,'#8f5a2c');R(220+i*38,195,28,1,'rgba(255,255,255,.2)')}
-  rr(222,164,34,20,2,'#f1e2bd');R(222,164,34,2,'#fff6da');R(228,173,18,2,'#cfd8dc');R(246,172.5,6,3,'#5d4037');rr(262,166,22,16,1,'#d8b878');R(262,169,22,1,'rgba(120,80,30,.35)');R(262,173,22,1,'rgba(120,80,30,.35)');R(262,177,22,1,'rgba(120,80,30,.35)');
+  rr(217,165,24,18,2,'#f1e2bd');R(217,165,24,2,'#fff6da');R(221,174,14,2,'#cfd8dc');R(234,173.5,5,3,'#5d4037');   // لوح التقطيع
+  X.fillStyle='rgba(0,0,0,.22)';X.beginPath();X.ellipse(256,185,13,3,0,0,7);X.fill();rr(244,170,24,14,4,'#9aa7ae');R(244,173,24,2,'rgba(255,255,255,.35)');X.fillStyle='#6b3d17';X.beginPath();X.ellipse(256,170.5,12,4,0,0,7);X.fill();for(const[bx,by]of[[250,170],[254,171.5],[259,170],[262,171.5],[256,169.5]])circ(bx,by,1.1,'#a8703a');R(241,174,4,3,'#78909c');R(267,174,4,3,'#78909c');   // قدرة الفول
+  X.strokeStyle='rgba(255,255,255,.55)';X.lineWidth=1.2;X.lineCap='round';for(const sx of[251,257,263]){X.beginPath();X.moveTo(sx,166);X.quadraticCurveTo(sx+2,162,sx,158);X.stroke()}
+  X.fillStyle='rgba(0,0,0,.22)';X.beginPath();X.ellipse(287,186,14,3,0,0,7);X.fill();rr(274,171,26,14,3,'#78909c');R(274,174,26,2,'rgba(255,255,255,.3)');rr(277,166,20,8,2,'#37474f');for(let i=0;i<6;i++){R(278.5+i*3.2,159+((i*5)%4),2.2,9,'#ffd54a');R(278.5+i*3.2,159+((i*5)%4),2.2,1.6,'#fff3b0')}R(298,172,5,2.5,'#455a64');   // قلاية البطاطس
+  const card=(cx,t)=>{rr(cx-13,183,26,8,2,'#f3e4bf');X.fillStyle=WD;X.font='bold 7px Tahoma,Arial';X.textAlign='center';X.direction='rtl';X.fillText(t,cx,189.3)};card(256,'فول');card(287,'بطاطس');
+  
   R(302,162,3,26,'#c9a227');rr(308,164,60,22,3,'#b0bec5');rr(310,166,56,18,2,'#e3eaee');for(const px of[324,343]){X.fillStyle='rgba(0,0,0,.18)';X.beginPath();X.ellipse(px,176.6,11,5.6,0,0,7);X.fill();X.fillStyle='#fff';X.beginPath();X.ellipse(px,175.6,10.5,5.2,0,0,7);X.fill();X.strokeStyle='#4a90c2';X.lineWidth=1;X.beginPath();X.ellipse(px,175.6,7,3.2,0,0,7);X.stroke()}
   X.fillStyle='#cfd8dc';X.beginPath();X.arc(359,177,5.5,Math.PI,0);X.fill();R(353,177,12,2,'#90a4ae');circ(359,170.8,1.3,'#eceff1');
   rr(232,193,46,11,3,'#f3e4bf');X.fillStyle=WD;X.font='bold 9px Tahoma,Arial';X.fillText('تجهيز',255,201.5);rr(315,193,46,11,3,'#f3e4bf');X.fillStyle=WD;X.fillText('تقديم',338,201.5);
@@ -296,7 +310,7 @@ const M={run:false,t:0,total:3,rot:0,glass:0,col:'#b5d94a'};
 const mkM=()=>({run:false,t:0,total:3,rot:0,glass:0,col:'#b5d94a'}),LX=[330,210,90];
 const HL=[{i:0,lane:1,k:1.2,mx:165,home:{x:196,y:228},jx:165,jy:160,sv:{x:196,y:228},m:mkM(),x:196,y:228,ph:0,fx:1,carry:null,task:null,item:'cane',skin:'#d29a66',shirt:'#e53935',hair:'#14100d',apron:true,hat:true},{i:1,lane:2,k:1.5,mx:90,home:{x:76,y:228},jx:90,jy:160,sv:{x:76,y:228},m:mkM(),x:76,y:228,ph:0,fx:1,carry:null,task:null,item:'cane',skin:'#f7dcc4',shirt:'#8e24aa',hair:'#4a2c12',apron:true,hat:true}];
 const HS=()=>HL.slice(0,S.u.hire),mUp=(m,dt)=>{if(m.run){m.t-=dt;m.rot+=dt*14;m.glass=Math.min(1,1-m.t/m.total);if(m.t<=0){m.run=false;m.glass=1}}};
-const say=(e,t,l)=>{e.bt=t;e.bl=l||2},HSAY={a:['أمرك يا باشا','حاضر يا فندم','ثواني وتكون جاهزة','من عنيا'],m:['العصير بيتعصر','قصب طازة','لحظة واحدة'],d:['اتفضل يا فندم','الكوباية جاهزة','بالهنا والشفا']},CSAY=['تسلم','عايزها سريعة','شكراً يا اسطى','متتأخرش'];
+const say=(e,t,l)=>{e.bt=t;e.bl=l||2},HSAY={s:['العيش جاهز','سلطة وطحينة حالاً','لحظة واحدة','سندوتش سخن'],a:['أمرك يا باشا','حاضر يا فندم','ثواني وتكون جاهزة','من عنيا'],m:['العصير بيتعصر','قصب طازة','لحظة واحدة'],d:['اتفضل يا فندم','الكوباية جاهزة','بالهنا والشفا']},CSAY=['تسلم','عايزها سريعة','شكراً يا اسطى','متتأخرش'];
 /* ---------- الثلاجة: محطة مشتركة (عامل واحد في المرة) ---------- */
 const FS={by:null,q:[],age:0};
 const fsAlive=w=>!!(w.task&&(w.task.s===20||w.task.s===21));
@@ -309,26 +323,27 @@ function fsTick(dt){
 function fridgeStep(w,t,sp,dt,dw){
   if(t.s===20){
     const turn=!FS.by&&(!FS.q.length||FS.q[0]===w)||FS.by===w;
-    if(!turn){if(!FS.q.includes(w))FS.q.push(w);t.fq=t.fq||0;if(move(w,ST.fridgeW.x,ST.fridgeW.y,sp,dt)){t.fq+=dt;if(t.fq>10){fsFree(w);return true}}return false}
-    if(move(w,ST.fridge.x,ST.fridge.y,sp,dt)&&fsReq(w)){t.s=21;t.w=FT;if(w.i!==undefined)say(w,'من الثلاجة',1.4)}
+    if(!turn){if(!FS.q.includes(w))FS.q.push(w);t.fq=t.fq||0;if(mv(w,ST.fridgeW.x,ST.fridgeW.y,sp,dt)){t.fq+=dt;if(t.fq>10){fsFree(w);return true}}return false}
+    if(mv(w,ST.fridge.x,ST.fridge.y,sp,dt)&&fsReq(w)){t.s=21;t.w=FT;if(w.i!==undefined)say(w,'من الثلاجة',1.4)}
     return false}
   w.work=true;t.w-=dw;if(t.w<=0){fsFree(w);return true}
   return false}
 function hUpdate(h,dt){
   if(h.bl>0)h.bl-=dt;h.moving=false;h.work=false;h.ph+=dt;const L=k=>S.u['w'+h.i+k]||0,sp=wkSpeed()*.85*h.k*(1+.15*L('walk')),dw=dt*(1+.25*L('work')),t=h.task,m=h.m;
-  if(!t){move(h,h.home.x,h.home.y,sp,dt);const c=qL(h.lane).find(c=>c.ready&&!c.taken);if(c){c.taken=true;h.task={c,s:1,w:WS};h.item=c.item;say(h,gf(c,pick(HSAY.a)),2);say(c,pick(CSAY),1.8)}return}
-  const c=t.c;if(c.st!=='q'){fsFree(h);h.task=null;h.carry=null;m.run=false;m.glass=0;return}
+  if(!t){mv(h,h.home.x,h.home.y,sp,dt);const c=qL(h.lane).find(c=>c.ready&&!c.taken);if(c){c.taken=true;h.task=ITEMS[c.item].sand?{c,s:30,sd:true,p:0,w:0}:{c,s:1,w:WS};h.item=c.item;say(h,gf(c,pick(HSAY.a)),2);say(c,pick(CSAY),1.8)}return}
+  const c=t.c;if(c.st!=='q'){fsFree(h);swFree(h);h.task=null;h.carry=null;h.nv=null;m.run=false;m.glass=0;return}
   switch(t.s){
     case 1:h.work=true;t.w-=dw;if(t.w<=0)t.s=cold(h.item)?20:2;break;
     case 20:case 21:if(fridgeStep(h,t,sp,dt,dw))t.s=2;break;
-    case 2:if(move(h,ST.store.x,ST.store.y,sp,dt)){t.s=3;t.w=.6*WS}break;
+    case 2:if(mv(h,ST.store.x,ST.store.y,sp,dt)){t.s=3;t.w=.6*WS}break;
     case 3:h.work=true;t.w-=dw;if(t.w<=0){h.carry='cane';t.s=5}break;
-    case 5:if(move(h,h.jx,h.jy,sp,dt)){h.carry=null;m.col=ITEMS[h.item].col;m.it=h.item;m.run=true;m.total=m.t=juiceTime()*1.25*Math.pow(.85,L('juice'))*jt(h.item);m.glass=0;t.s=6;say(h,pick(HSAY.m),2)}break;
+    case 5:if(mv(h,h.jx,h.jy,sp,dt)){h.carry=null;m.col=ITEMS[h.item].col;m.it=h.item;m.run=true;m.total=m.t=juiceTime()*1.25*Math.pow(.85,L('juice'))*jt(h.item);m.glass=0;t.s=6;say(h,pick(HSAY.m),2)}break;
     case 6:h.work=true;if(!m.run){h.carry='juice';m.glass=0;t.s=8}break;
-    case 8:if(move(h,ST.cups.x,ST.cups.y,sp,dt)){t.s=9;t.w=.7*WS}break;
+    case 8:if(mv(h,ST.cups.x,ST.cups.y,sp,dt)){t.s=9;t.w=.7*WS}break;
     case 9:h.work=true;t.w-=dw;if(t.w<=0){h.carry='cup';t.s=11}break;
-    case 11:if(move(h,h.sv.x,h.sv.y,sp,dt)){t.s=12;t.w=.4*WS}break;
-    case 12:h.work=true;t.w-=dw;if(t.w<=0){c.hb=L('tip');c.pay=Math.round(cPrice(c)*(1+.08*L('price')));serve(c);h.carry=null;h.task=null;say(h,pick(HSAY.d),2);say(c,'تسلم إيدك',1.8)}break}}
+    case 11:if(mv(h,h.sv.x,h.sv.y,sp,dt)){t.s=12;t.w=.4*WS}break;
+    case 30:case 31:case 32:case 33:case 34:case 39:sdStep(h,t,sp,dt,dw,true);break;
+    case 12:h.work=true;t.w-=dw;if(t.w<=0){c.hb=L('tip');c.pay=Math.round(cPrice(c)*(1+.08*L('price')));serve(c);h.carry=null;h.task=null;say(h,pick(HSAY.d),2);if(!ITEMS[c.item].sand)say(c,'تسلم إيدك',1.8)}break}}
 const ITEMS={
  cane:{n:'عصير قصب',i:'cup',lv:1,mul:1,col:'#b5d94a'},
  lemon:{n:'قصب بليمون',i:'lemon',lv:2,mul:1.6,col:'#d9e24f',lines:[
@@ -457,8 +472,51 @@ Object.assign(ITEMS,{
 يا معلم|كوكتيل فواكه لو سمحت|تحت أمرك يا غالية|ثواني ويبقى عندك
 ربنا يكرمك|كوباية كوكتيل بسرعة|من عنيا يا هانم|ثواني`)}}
 });
+/* ---------- v8: السندوتشات (بتتفتح من القايمة، ولها مخزن مكونات مستقل) ----------
+   mul=سعر البيع (× سعر الكوب) | pb=صبر زيادة للزبون | ucost=سعر الفتح | ing=المكونات اللي بتتخصم (واحدة من كل نوع) */
+Object.assign(ITEMS,{
+ fool:{n:'سندوتش فول',i:'sand',lv:3,mul:3.5,pb:12,sand:true,ucost:700,ing:['bread','beans','salad','tahini'],lines:{
+  m:P(`يا اسطى|عايز سندوتش فول بالسلطة والطحينة|من عنيا يا باشا|فول سخن وسلطة طازة
+السلام عليكم|هات سندوتش فول لو سمحت، وحط سلطة وطحينة|وعليكم السلام|ثواني ويتجهز
+صباح الخير|نفسي في سندوتش فول بالطحينة والسلطة|صباح النور يا باشا|فول زي الفل حالاً
+يا معلم|سندوتش فول مظبوط عليه سلطة وطحينة|تحت أمرك يا ريس|ثواني ويكون جاهز
+الجو برد شوية|عايز سندوتش فول سخن بالسلطة والطحينة|أمرك يا باشا|حالاً يا غالي
+أنا جعان قوي|هات سندوتش فول بالسلطة والطحينة|سلامتك يا غالي|ثواني ونشبّعك
+مساء الخير|سندوتش فول بالطحينة والسلطة يا ريس|مساء النور يا باشا|من عنيا
+وحشني فولكم|سندوتش فول زي العادة بالسلطة والطحينة|نورت يا غالي|حاضر يا حبيبي
+ربنا يكرمك|عايز سندوتش فول وزوّد الطحينة شوية|تحت أمرك يا باشا|حاضر`),
+  f:P(`يا اسطى|عايزة سندوتش فول بالسلطة والطحينة|من عنيا يا هانم|فول سخن وسلطة طازة
+السلام عليكم|هاتلي سندوتش فول لو سمحت، وحط سلطة وطحينة|وعليكم السلام يا غالية|ثواني ويتجهز
+صباح الخير|نفسي في سندوتش فول بالطحينة والسلطة|صباح النور يا ست الكل|فول زي الفل حالاً
+يا معلم|عايزة سندوتش فول مظبوط عليه سلطة وطحينة|تحت أمرك يا هانم|ثواني ويكون جاهز
+الجو برد شوية|عايزة سندوتش فول سخن بالسلطة والطحينة|أمرك يا هانم|حالاً يا غالية
+أنا جعانة قوي|هاتلي سندوتش فول بالسلطة والطحينة|سلامتك يا غالية|ثواني ونشبّعك
+مساء الخير|سندوتش فول بالطحينة والسلطة لو سمحت|مساء النور يا مدام|من عنيا
+وحشني فولكم|سندوتش فول زي العادة بالسلطة والطحينة|نورتي يا غالية|حاضر يا ست الكل
+ربنا يكرمك|عايزة سندوتش فول، وزوّد الطحينة شوية|تحت أمرك يا هانم|حاضر`)}},
+ fries:{n:'سندوتش بطاطس',i:'sand',lv:5,mul:4.8,pb:14,sand:true,ucost:1500,ing:['bread','potato','salad','tahini'],lines:{
+  m:P(`يا اسطى|عايز سندوتش بطاطس بالسلطة والطحينة|من عنيا يا باشا|بطاطس سخنة ومقرمشة
+السلام عليكم|هات سندوتش بطاطس لو سمحت، وحط سلطة وطحينة|وعليكم السلام|ثواني ويتجهز
+صباح الخير|نفسي في سندوتش بطاطس بالطحينة والسلطة|صباح النور يا باشا|بطاطس طازة حالاً
+يا معلم|سندوتش بطاطس مقرمش عليه سلطة وطحينة|تحت أمرك يا ريس|ثواني ويكون جاهز
+أنا جعان وعايز حاجة سخنة|هات سندوتش بطاطس بالسلطة والطحينة|سلامتك يا غالي|حالاً
+مساء الخير|سندوتش بطاطس بالطحينة والسلطة يا ريس|مساء النور يا باشا|من عنيا
+الجو حلو النهاردة|عايز سندوتش بطاطس بالسلطة والطحينة|أمرك يا باشا|ثواني وتاكله سخن
+ربنا يكرمك|سندوتش بطاطس وزوّد الطحينة شوية|تحت أمرك يا باشا|حاضر`),
+  f:P(`يا اسطى|عايزة سندوتش بطاطس بالسلطة والطحينة|من عنيا يا هانم|بطاطس سخنة ومقرمشة
+السلام عليكم|هاتلي سندوتش بطاطس لو سمحت، وحط سلطة وطحينة|وعليكم السلام يا غالية|ثواني ويتجهز
+صباح الخير|نفسي في سندوتش بطاطس بالطحينة والسلطة|صباح النور يا ست الكل|بطاطس طازة حالاً
+يا معلم|عايزة سندوتش بطاطس مقرمش عليه سلطة وطحينة|تحت أمرك يا هانم|ثواني ويكون جاهز
+أنا جعانة وعايزة حاجة سخنة|هاتلي سندوتش بطاطس بالسلطة والطحينة|سلامتك يا غالية|حالاً
+مساء الخير|سندوتش بطاطس بالطحينة والسلطة لو سمحت|مساء النور يا مدام|من عنيا
+الجو حلو النهاردة|عايزة سندوتش بطاطس بالسلطة والطحينة|أمرك يا هانم|ثواني وتاكليه سخن
+ربنا يكرمك|سندوتش بطاطس وزوّد الطحينة شوية|تحت أمرك يا هانم|حاضر`)}}});
+/* تعليقات الزبون بعد استلام السندوتش (بتتنوع ومبتتكررش ورا بعض) */
+const COM={fool:{m:['تسلم إيدك، الفول تحفة','الله! الطحينة مظبوطة','السلطة طازة ما شاء الله','فول زي بتاع زمان','سندوتش يشبّع بجد','كده الصباحية اتظبطت'],f:['تسلم إيدك، الفول تحفة','الله! الطحينة مظبوطة','السلطة طازة ما شاء الله','فول زي بتاع زمان','سندوتش يشبّع بجد','كده الجوع راح']},
+ fries:{m:['البطاطس مقرمشة بجد','الطحينة مع البطاطس حكاية','سندوتش يجنن يا اسطى','سخن وطازة، تسلم إيدك','ده أحلى سندوتش بطاطس','السلطة مظبوطة عليه'],f:['البطاطس مقرمشة بجد','الطحينة مع البطاطس حكاية','سندوتش يجنن يا اسطى','سخن وطازة، تسلم إيدك','ده أحلى سندوتش بطاطس','السلطة مظبوطة عليه']}},LASTCOM={};
+function pickCom(c){const a=COM[c.item][c.g],k=c.item+c.g;let t;do{t=pick(a)}while(a.length>1&&t===LASTCOM[k]);LASTCOM[k]=t;return t}
 const FD=k=>ITEMS[k]&&ITEMS[k].cost?ITEMS[k]:null,jt=k=>(ITEMS[k]&&ITEMS[k].jt)||1;
-const isOpen=k=>{const m=ITEMS[k];return m.cost?!!S.dr[k]:m.lv<=level()};
+const isOpen=k=>{const m=ITEMS[k];return m.sand?!!S.dr[k]:m.cost?!!S.dr[k]:m.lv<=level()};
 const prodCost=c=>{const m=ITEMS[c.item];return m&&m.cm?Math.round(price()*m.cm*(c.big?1.6:1)):0};
 const linesOf=(it,g)=>it==='cane'?CL[g]:ITEMS[it].lines[g],isPrice=c=>!linesOf(c.item,c.g)[c.line][1];
 const gf=(c,t)=>c.g==='f'?t.replace(/يا باشا/g,'يا هانم').replace(/يا غالي/g,'يا غالية').replace(/يا حبيبي/g,'يا حبيبتي'):t;
@@ -474,11 +532,11 @@ const juiceTime=()=>3.2*JSLOW*Math.pow(.82,S.u.juice)*Math.pow(.78,S.u.juice2),F
 const qL=l=>cust.filter(c=>c.st==='q'&&(c.lane||0)===l),qList=()=>qL(0);
 const pick=a=>a[Math.floor(Math.random()*a.length)];
 let coldRun=0;
-function pickItem(){let un=Object.keys(ITEMS).filter(isOpen);if(coldRun>=2){const nc=un.filter(k=>!ITEMS[k].cold);if(nc.length)un=nc}
-  let tot=0;const w=un.map(k=>{const v=k==='cane'?3:ITEMS[k].cost?1.5:2;tot+=v;return v});let r=Math.random()*tot,it='cane';for(let i=0;i<un.length;i++){r-=w[i];if(r<=0){it=un[i];break}}
+function pickItem(){let un=Object.keys(ITEMS).filter(isOpen).filter(k=>!ITEMS[k].sand||!swMissing(k).length);if(coldRun>=2){const nc=un.filter(k=>!ITEMS[k].cold);if(nc.length)un=nc}
+  let tot=0;const w=un.map(k=>{const v=k==='cane'?3:ITEMS[k].cost||ITEMS[k].sand?1.5:2;tot+=v;return v});let r=Math.random()*tot,it='cane';for(let i=0;i<un.length;i++){r-=w[i];if(r<=0){it=un[i];break}}
   coldRun=ITEMS[it].cold?coldRun+1:0;return it}
-function addCust(ln){ln=ln||0;const lk=mkLook(),item=pickItem(),n=linesOf(item,lk.g).length,hag=!ln&&S.sold>=12&&Math.random()<.12?{st:'pre'}:null;
-  cust.push({x:210,y:H+16,ph:Math.random()*5,fx:1,st:'q',wp:true,ready:false,carry:null,l:0,pt:pat(item),pm:pat(item),item,hag,lane:ln,big:S.u.big>0&&Math.random()<.3,line:Math.floor(Math.random()*n),...lk})}
+function addCust(ln){ln=ln||0;const lk=mkLook(),item=pickItem(),n=linesOf(item,lk.g).length,hag=!ln&&S.sold>=12&&Math.random()<.12&&!ITEMS[item].sand?{st:'pre'}:null;
+  cust.push({x:210,y:H+16,ph:Math.random()*5,fx:1,st:'q',wp:true,ready:false,carry:null,l:0,pt:pat(item),pm:pat(item),item,hag,lane:ln,big:S.u.big>0&&Math.random()<.3&&!ITEMS[item].sand,line:Math.floor(Math.random()*n),...lk})}
 function avatar(e){const cv=document.createElement('canvas');cv.width=cv.height=88;const main=X;X=cv.getContext('2d');
   try{X.setTransform(2,0,0,2,0,0);X.save();X.beginPath();X.arc(22,22,22,0,7);X.clip();R(0,0,44,44,'#f6e3b4');
     X.translate(22,63);X.scale(1.1,1.1);person(Object.assign({},e,{x:0,y:0,ph:0,moving:false,work:false,carry:null,fx:1}));X.restore()}finally{X=main}
@@ -498,7 +556,7 @@ function chatTick(dt){const c=CH.c;if(!c)return;const ch=c.chat;
   if(ch&&c.hag&&c.hag.st==='pre'&&CH.n>=ch.msgs.length&&ch.t>=ch.total){c.hag.st='ask';$('hagBtns').classList.add('show')}
   if(CH.fin>0){CH.fin-=dt;if(CH.fin<=0){$('chat').classList.remove('show');$('hagBtns').classList.remove('show');CH.c=null}}}
 function leave(c,angry){c.st='l';c.l=0;if(angry)pops.push({x:c.x,y:c.y-70,t:0,k:'angry'});
-  if(Wk.task&&Wk.task.c===c){fsFree(Wk);if(Wk.task.fs)S.stock++;Wk.task=null;Wk.carry=null;M.run=false;M.glass=0}
+  if(Wk.task&&Wk.task.c===c){fsFree(Wk);swFree(Wk);if(Wk.task.fs)S.stock++;Wk.task=null;Wk.carry=null;Wk.nv=null;M.run=false;M.glass=0}
   if(CH.c===c)$('hagBtns').classList.remove('show')}
 function leaveAngry(c){leave(c,true);if(CH.c===c){addMsg(c,{w:0,t:'مش هستنى أكتر، سلام!'});CH.fin=2.2}}
 function hagChoose(yes){const c=CH.c;if(!c||!c.hag||c.hag.st!=='ask')return;$('hagBtns').classList.remove('show');c.hag.st='done';S.haggles++;
@@ -507,27 +565,28 @@ function hagChoose(yes){const c=CH.c;if(!c||!c.hag||c.hag.st!=='ask')return;$('h
     if(Math.random()<.6)setTimeout(()=>addMsg(c,{w:0,t:'طيب ماشي، هدفع'}),600);
     else{setTimeout(()=>addMsg(c,{w:0,t:'خلاص مش هاخد، سلام'}),600);leave(c,false);CH.fin=2.6}}
   checkAch();save()}
-function serve(c){c.st='l';c.l=0;c.carry='cup';const p=c.pay||cPrice(c),r=c.pt/c.pm,tip=Math.ceil((r>.5?Math.ceil(p*.5):r>.25?Math.ceil(p*.25):0)*(RU.on?2:1)*(1+.2*S.u.reg)*(1+.15*(c.hb||0))*(c.item==='lemon'?1+.15*S.u.lemon:1));
+function serve(c){c.st='l';c.l=0;c.carry=ITEMS[c.item].sand?'sand':'cup';const p=c.pay||cPrice(c),r=c.pt/c.pm,tip=Math.ceil((r>.5?Math.ceil(p*.5):r>.25?Math.ceil(p*.25):0)*(RU.on?2:1)*(1+.2*S.u.reg)*(1+.15*(c.hb||0))*(c.item==='lemon'?1+.15*S.u.lemon:1));
   const pc=prodCost(c);S.money+=p+tip-pc;S.earned+=p+tip-pc;S.sold++;S.by[c.item]=(S.by[c.item]||0)+1;if(tip)S.tips++;
   pops.push({x:c.x,y:c.y-70,t:0,k:'sale',n:p-pc});
   for(let i=0;i<(tip?6:4);i++)coins.push({x0:c.x,y0:c.y-70,t:-i*.07,d:.85});
-  if(tip){pops.push({x:c.x,y:c.y-102,t:-.2,k:'tip',n:tip});addMsg(c,{w:0,t:pick(TIPSAY).join('، ')})}if(CH.c===c)CH.fin=tip?2.6:.9;
+  if(tip){pops.push({x:c.x,y:c.y-102,t:-.2,k:'tip',n:tip});addMsg(c,{w:0,t:pick(TIPSAY).join('، ')})}if(CH.c===c)CH.fin=tip?2.6:.9;if(ITEMS[c.item].sand){const cm=pickCom(c);say(c,cm,2.6);if(CH.c===c){addMsg(c,{w:0,t:cm});CH.fin=Math.max(CH.fin,tip?3.6:2.8)}}
   snd('sell');if(tip)snd('tip');lvCheck();checkAch();save()}
 
 function wkUpdate(dt){
   const w=Wk,sp=wkSpeed();if(!isFinite(w.x)||!isFinite(w.y)){w.x=ST.idle.x;w.y=ST.idle.y}w.moving=false;w.work=false;w.ph+=dt;
   let t=w.task;
   if(t&&talking())return;
-  if(!t){move(w,ST.idle.x,ST.idle.y,sp,dt);return}
+  if(!t){mv(w,ST.idle.x,ST.idle.y,sp,dt);return}
   switch(t.s){
     case 20:case 21:if(fridgeStep(w,t,sp,dt,dt)){if(S.stock>0){S.stock--;FR.t=0;t.fs=true;w.carry='cup';t.s=10}else t.s=1}break;
-    case 2:if(move(w,ST.store.x,ST.store.y,sp,dt)){t.s=3;t.w=.6*WS}break;
+    case 2:if(mv(w,ST.store.x,ST.store.y,sp,dt)){t.s=3;t.w=.6*WS}break;
     case 3:w.work=true;t.w-=dt;if(t.w<=0){w.carry='cane';t.s=4}break;
-    case 5:if(move(w,ST.juicer.x,ST.juicer.y,sp,dt)){w.carry=null;M.col=(ITEMS[w.item]||ITEMS.cane).col;M.it=w.item;M.run=true;M.total=M.t=juiceTime()*jt(w.item);M.glass=0;t.s=6}break;
+    case 5:if(mv(w,ST.juicer.x,ST.juicer.y,sp,dt)){w.carry=null;M.col=(ITEMS[w.item]||ITEMS.cane).col;M.it=w.item;M.run=true;M.total=M.t=juiceTime()*jt(w.item);M.glass=0;t.s=6}break;
     case 6:w.work=true;if(!M.run){w.carry='juice';M.glass=0;t.s=7}break;
-    case 8:if(move(w,ST.cups.x,ST.cups.y,sp,dt)){t.s=9;t.w=.7*WS}break;
+    case 8:if(mv(w,ST.cups.x,ST.cups.y,sp,dt)){t.s=9;t.w=.7*WS}break;
     case 9:w.work=true;t.w-=dt;if(t.w<=0){w.carry='cup';t.s=10}break;
-    case 11:if(move(w,ST.serve.x,ST.serve.y,sp,dt)){t.s=12;t.w=.4*WS}break;
+    case 30:case 31:case 32:case 33:case 34:case 39:sdStep(w,t,sp,dt,dt,false);break;
+    case 11:if(mv(w,ST.serve.x,ST.serve.y,sp,dt)){t.s=12;t.w=.4*WS}break;
     case 12:w.work=true;t.w-=dt;if(t.w<=0){serve(t.c);w.carry=null;w.task=null}break;
   }
 }
@@ -543,12 +602,78 @@ function update(dt){
   const XP=c=>{const g=(c.lane||0)===2?150:270;return[[g,c.y+6],[g,490],[210,490],[210,H+20]]};
   for(const c of cust)if(c.st==='l'){const L=c.ex||(c.ex=XP(c));c.moving=false;c.ph+=dt;c.sayT=Math.max(0,(c.sayT||0)-dt);if(c.bl>0)c.bl-=dt;if(move(c,L[c.l][0],L[c.l][1],62,dt)){c.l++;if(c.l>=L.length)c.dead=true}}
   cust=cust.filter(c=>!c.dead);
-  fsTick(dt);wkUpdate(dt);HS().forEach(h=>{hUpdate(h,dt);mUp(h.m,dt)});extra(dt);
+  fsTick(dt);swTick();wkUpdate(dt);HS().forEach(h=>{hUpdate(h,dt);mUp(h.m,dt)});extra(dt);
   if(M.run){M.t-=dt;M.rot+=dt*14;M.glass=Math.min(1,1-M.t/M.total);if(M.t<=0){M.run=false;M.glass=1}}
   for(const p of pops){p.t+=dt;p.y-=18*dt}
   pops=pops.filter(p=>p.t<1.7);
   saveT+=dt;if(saveT>5){saveT=0;save()}
 }
+
+/* ---------- v8: المكونات وتحضير السندوتشات ----------
+   دورة الشغل: الزبون يطلب ← الطلب يظهر على لوحة السندوتشات ← العامل يمشي (navPath) على محطة العيش ← الفول أو البطاطس ←
+   السلطة ← الطحينة ← منطقة التقديم ← يمشي من الباب والممر لحد الكاونتر ويسلّم. محطة التحضير بتشتغل عامل واحد في المرة. */
+const ING={bread:{n:'عيش',u:.12,i:'bread'},beans:{n:'فول',u:.25,i:'bean'},potato:{n:'بطاطس',u:.35,i:'fries'},salad:{n:'سلطة',u:.15,i:'salad'},tahini:{n:'طحينة',u:.13,i:'tahini'}},ING_ORDER=['bread','beans','potato','salad','tahini'];
+const stCap=()=>12+8*S.u.store,ingUnit=k=>Math.max(1,Math.round(price()*ING[k].u)),sandCost=k=>ITEMS[k].ing.reduce((a,i)=>a+ingUnit(i),0);
+const sandOpen=()=>!!(S.dr.fool||S.dr.fries),needIng=k=>k==='beans'?!!S.dr.fool:k==='potato'?!!S.dr.fries:sandOpen();
+const swMissing=it=>ITEMS[it].ing.filter(k=>S.ing[k]<1);
+const MS={sig:''},ingSig=()=>ING_ORDER.map(k=>S.ing[k]).join()+'|'+stCap()+'|'+(S.dr.fool?1:0)+(S.dr.fries?1:0);
+const SO={}; // كل محطة بتشتغل عامل واحد في المرة (والباقي بيستنى جنبها)
+function swFree(w){for(const k in SO)if(SO[k]===w)SO[k]=null}
+function swTick(){for(const k in SO){const w=SO[k];if(w&&!(w.task&&w.task.sd&&(w.task.s===33||w.task.s===34)))SO[k]=null}}
+function mv(e,x,y,sp,dt){if(e.y<146)return moveNav(e,{x,y},sp,dt);e.nv=null;return move(e,x,y,sp,dt)}
+function useIng(k){S.ing[k]=Math.max(0,S.ing[k]-1);if(S.ing[k]<1)toast(tt('box','خلص '+ING[k].n,'اشتريه من القايمة'),2600)}
+function buyIng(k,n){const have=S.ing[k];n=Math.min(n,stCap()-have);if(n<=0)return false;const c=n*ingUnit(k);if(S.money<c)return false;S.money-=c;S.ing[k]+=n;save();refresh();snd('up');checkAch();return true}
+const STG=[{k:'bread',s:'bread',w:.9,t:'اضغط على العيش',g:'رايح للعيش',d:'بياخد العيش'},{w:1.2},{k:'salad',s:'salad',w:.8,t:'اضغط على السلطة',g:'رايح للسلطة',d:'بيحط السلطة'},{k:'tahini',s:'tahini',w:.8,t:'اضغط على الطحينة',g:'رايح للطحينة',d:'بيحط الطحينة'},{s:'pass',w:1,t:'اضغط على منطقة التقديم',g:'رايح لمنطقة التقديم',d:'بيجهز الطلب للتقديم'}];
+function stgOf(it,p){const o=STG[p];if(p===1)return it==='fool'?{w:1.2,ing:'beans',spot:'beans',t:'اضغط على الفول',g:'رايح للفول',d:'بيحط الفول'}:{w:1.5,ing:'potato',spot:'potato',t:'اضغط على البطاطس',g:'رايح للبطاطس',d:'بيحط البطاطس'};return{w:o.w,ing:o.k||null,spot:o.s,t:o.t,g:o.g,d:o.d}}
+const szone=(it,p)=>Z[['sdb',it==='fool'?'sdfl':'sdfr','sds','sdt','sdp'][p]];
+function swWhy(it){const m=swMissing(it);return m.length?'ناقص: '+m.map(k=>ING[k].n).join(' و ')+' — اشتريه من القايمة':'جاري التجهيز...'}
+/* حركة العامل على مسار navPath (بتلف حوالين الحيطان والمعدات وبتعدّي من الباب) */
+function moveNav(e,d,sp,dt){let n=e.nv;
+  if(!n||n.tx!==d.x||n.ty!==d.y){const p=navPath({x:e.x,y:e.y},d);n=e.nv={tx:d.x,ty:d.y,p:p||[{x:e.x,y:e.y},{x:d.x,y:d.y}],i:1}}
+  while(n.i<n.p.length){const q=n.p[n.i];if(move(e,q.x,q.y,sp,dt))n.i++;else return false}
+  e.nv=null;return true}
+/* حالات السندوتش: 30=مستني مكون أو المحطة | 31=مستني ضغطة اللاعب (المساعد بيتخطاها) | 32=ماشي للمحطة | 33=شغال | 34=مستني مكون في المحطة | 39=ماشي يسلّم */
+function sdStep(w,t,sp,dt,dw,auto){const c=t.c,it=c.item;
+  switch(t.s){
+    case 30:if(swMissing(it).length)break;t.p=0;t.s=auto?32:31;break;
+    case 32:{const g=stgOf(it,t.p),p2=SPOT[g.spot],oc=SO[g.spot];
+      if(oc&&oc!==w&&Math.hypot(p2.x-w.x,p2.y-w.y)<34)break; // المحطة مشغولة: العامل بيستنى جنبها
+      if(moveNav(w,p2,sp,dt)){if(SO[g.spot]&&SO[g.spot]!==w)break;SO[g.spot]=w;if(g.ing&&S.ing[g.ing]<1){t.s=34;break}if(g.ing)useIng(g.ing);t.s=33;t.w=g.w*WS;t.dur=t.w;if(auto&&Math.random()<.4)say(w,pick(HSAY.s),1.5)}break}
+    case 33:w.work=true;t.w-=dw;if(t.w<=0)sdDone(w,t,auto);break;
+    case 34:{const g=stgOf(it,t.p);if(S.ing[g.ing]>=1){useIng(g.ing);t.s=33;t.w=g.w*WS;t.dur=t.w}break}
+    case 39:if(moveNav(w,w.i!==undefined?w.sv:ST.serve,sp,dt)){t.s=12;t.w=.4*WS}break}}
+function sdDone(w,t,auto){const g=stgOf(t.c.item,t.p);if(SO[g.spot]===w)SO[g.spot]=null;if(t.p===0)w.carry='sb';if(t.p<4){t.p++;t.s=auto?32:31;return}w.carry='sand';t.s=auto?39:10}
+/* ---------- المنيو: السندوتشات + مخزن المكونات ---------- */
+function sandMenu(){let h='<div class="menu-h">السندوتشات</div>';
+  for(const k of ['fool','fries']){const m=ITEMS[k],pr=itemPrice(k),cs=sandCost(k),info='بيع '+pr+' • مكونات '+cs+' • صافي '+(pr-cs)+' • صبر +'+m.pb+' ث';
+    if(S.dr[k]){h+='<div class="menu-row"><span style="flex:1;min-width:0">'+ic('sand',22)+'<span class="at" style="display:flex;flex-direction:column;min-width:0">'+m.n+'<small>'+info+'</small></span></span><b style="flex:none">'+ic('check',18)+'</b></div>';continue}
+    const lk=level()<m.lv,ok=!lk;
+    h+='<div class="menu-row'+(ok?'':' lock')+'"><span style="flex:1;min-width:0">'+ic('lock',22)+'<span class="at" style="display:flex;flex-direction:column;min-width:0">'+m.n+'<small>'+(lk?'يفتح في مستوى '+m.lv:info)+'</small></span></span>'+(ok?'<button class="wbuy" style="flex:none;white-space:nowrap" data-sand="'+k+'" data-c="'+m.ucost+'"'+(S.money<m.ucost?' disabled':'')+'>افتح بـ '+m.ucost+' ج</button>':'<b style="flex:none">'+m.ucost+' ج</b>')+'</div>'}
+  h+='<div class="menu-h" id="stkAnchor">مخزن المكونات <small>السعة '+stCap()+' لكل مكون</small></div>';
+  if(!sandOpen())return h+'<p class="stk-n">المخزن بيشتغل أول ما تفتح سندوتش.</p>';
+  const cap=stCap();
+  for(const k of ING_ORDER){if(!needIng(k))continue;const q=S.ing[k],u=ingUnit(k),n5=Math.min(5,cap-q),nm=cap-q,pc=Math.round(q/cap*100);
+    h+='<div class="stk"><div class="stk-h"><span>'+ic(ING[k].i,22)+ING[k].n+'</span><b>'+q+' / '+cap+'</b></div><div class="stk-bar"><i class="'+(q<1?'out':q<4?'low':'')+'" style="width:'+pc+'%"></i></div><div class="stk-b">'
+      +'<button class="wbuy" data-add="'+k+':5" data-c="'+n5*u+'"'+(n5<=0||S.money<n5*u?' disabled':'')+'>+'+Math.max(n5,0)+' • '+Math.max(n5,0)*u+' ج</button>'
+      +'<button class="wbuy" data-add="'+k+':max" data-c="'+nm*u+'"'+(nm<=0||S.money<nm*u?' disabled':'')+'>املأ • '+nm*u+' ج</button></div></div>'}
+  return h}
+/* ---------- رسم: أيقونة السندوتش + لوحة الطلبات + عدّادات المكونات ---------- */
+function sandIcon(x,y,it,k){const fool=it==='fool';
+  X.fillStyle='rgba(0,0,0,.18)';X.beginPath();X.ellipse(x,y+7,9,2.2,0,0,7);X.fill();
+  rr(x-9,y-1,18,7,3,'#d9a05b');
+  if(fool)R(x-8,y-3.2,16,3,'#6d4020');else for(let i=0;i<5;i++)R(x-7.5+i*3.4,y-5+(i%2),2.3,5,'#ffca28');
+  R(x-8,y-4.2,16,2,'#7cb342');circ(x-3,y-4.7,1.4,'#e53935');circ(x+3,y-4.4,1.2,'#e53935');R(x-6,y-3.4,12,.9,'#fff3c4');
+  if(k!=='sb'){X.fillStyle='#e8b56a';X.beginPath();X.ellipse(x,y-4.5,9.5,5,0,Math.PI,0);X.fill();X.fillStyle='#f4cf8d';X.beginPath();X.ellipse(x-2,y-7.2,4,1.5,0,0,7);X.fill()}
+  if(k==='sand'){R(x-3.5,y-9.5,7,16,'rgba(255,248,225,.78)');R(x-3.5,y-9.5,7,1.6,'#e53935')}}
+const BADGES=[['bread',253,60],['salad',310,60],['tahini',367,60],['beans',268,168],['potato',300,168]];
+function drawSand(t){const open=sandOpen();X.textAlign='center';X.direction='rtl';
+  const tk=[Wk].concat(HS()).filter(w=>w.task&&w.task.sd).map(w=>w.task),bx=297,by=WY(47);
+  if(!open){X.fillStyle='#ffb347';X.font='bold 8.5px Tahoma,Arial';X.fillText('تفتح من القايمة',bx,by)}
+  else if(!tk.length){const low=ING_ORDER.some(k=>needIng(k)&&S.ing[k]<1);X.fillStyle=low?'#ff8a80':'#9be28b';X.font='bold 8.5px Tahoma,Arial';X.fillText(low?'ناقص مكونات':'جاهز للطلبات',bx,by)}
+  else tk.slice(0,3).forEach((k,i)=>{const x=266+i*22,y=WY(34),bl=k.s===30||k.s===34,st=(k.s>=10&&k.s<=12||k.s===39)?5:(k.s===30?-1:(k.p||0));
+    rr(x,y,19,16,2,bl?'#ffcdd2':'#fff3d6');X.fillStyle='#4a2c12';X.font='bold 8.5px Tahoma,Arial';X.fillText(k.c.item==='fool'?'ف':'ب',x+9.5,y+8);
+    for(let j=0;j<5;j++)circ(x+3.5+j*3,y+12.6,1,j<=st?(bl?'#c62828':'#2e7d32'):'rgba(0,0,0,.2)')});
+  if(open)for(const[k,x,y]of BADGES){if(!needIng(k))continue;const q=S.ing[k];circ(x,WY(y),6.4,'rgba(0,0,0,.35)');circ(x,WY(y)-.6,6,q<1?'#c62828':q<4?'#ef6c00':'#2e7d32');X.fillStyle='#fff';X.font='bold '+(q>99?6:8)+'px Tahoma,Arial';X.fillText(q>99?'99+':String(q),x,WY(y)+2.2)}}
 
 /* ---------- drawing ---------- */
 
@@ -571,6 +696,7 @@ function cupFx(it,x,y){
     X.strokeStyle='#8d6e63';X.lineWidth=.9;X.beginPath();X.moveTo(x+1,y-8);X.lineTo(x+1.5,y-15);X.stroke();X.fillStyle='#7e57c2';X.beginPath();X.arc(x+1.5,y-15,4,Math.PI,0);X.fill();R(x-.2,y-17.2,1.4,2.2,'#fff')}}
 function drawFruits(){let i=0;for(const k in ITEMS)if(ITEMS[k].cost&&S.dr[k]){fruitIcon(k,346+i*15,107,.95);i++}}
 function item(k,x,y,it){
+  if(k==='sb'||k==='sand'||(k==='cup'&&ITEMS[it]&&ITEMS[it].sand)){sandIcon(x,y,it,k);return}
   if(k==='cane'&&FD(it)){fruitIcon(it,x,y,1);return}
   if(k==='cane'){X.strokeStyle='#7cb342';X.lineWidth=4;X.lineCap='round';X.beginPath();X.moveTo(x-7,y+8);X.lineTo(x+7,y-8);X.stroke();X.strokeStyle='#33691e';X.lineWidth=1.5;X.beginPath();X.moveTo(x-1,y+1);X.lineTo(x+3,y+3);X.moveTo(x+3,y-4);X.lineTo(x+6,y-2);X.stroke();return}
   const I=ITEMS[it]||ITEMS.cane;
@@ -700,7 +826,7 @@ function drawMachine(t,m,cx){X.save();X.translate((cx||160)-160,0);
 X.restore()}
 function draw(t){
   X.setTransform(2,0,0,2,0,2*DY);X.drawImage(B,0,-DY,W,TH);
-  drawMachine(t,M,240);drawFridge();drawFruits();
+  drawMachine(t,M,240);drawFridge();drawFruits();drawSand(t);
   for(const h of HS())drawMachine(t,h.m,h.mx);
   const ents=[Wk].concat(HS(),cust).sort((a,b)=>a.y-b.y);
   for(const e of ents){
@@ -709,6 +835,7 @@ function draw(t){
     if(HL.includes(e)){rr(e.x-24,e.y-71,48,14,6,'#7a1f1f');X.fillStyle='#ffd54a';X.font='bold 9px Tahoma,Arial';X.textAlign='center';X.fillText('مساعد '+['١','٢'][e.i],e.x,e.y-61)}
     if(e.st==='q'&&e.ready&&e.pm&&((e.lane||0)>0||e.chat&&e.chat.t>=e.chat.total)){const r=Math.max(0,e.pt/e.pm),h=30*r;rr(e.x+16,e.y-37,5,30,2,'rgba(0,0,0,.5)');if(h>3)rr(e.x+16,e.y-7-h,5,h,2,r>.5?'#7cb342':r>.25?'#ffb300':'#e53935')}
     if(e===Wk){rr(e.x-17,e.y-71,34,14,6,'#4a2c12');X.fillStyle='#ffd54a';X.font='bold 9px Tahoma,Arial';X.textAlign='center';X.fillText('أنت',e.x,e.y-61)}
+    if(e.task&&e.task.sd&&e.task.s===33&&e.task.dur){const r=1-Math.max(0,e.task.w)/e.task.dur;rr(e.x-15,e.y-81,30,6,3,'rgba(0,0,0,.6)');rr(e.x-14,e.y-80,28*Math.min(1,r),4,2,'#7cb342')}
   }
   {const g=target().z;if(g){X.strokeStyle='#ffd54a';X.lineWidth=2+Math.sin(t*7);rr(g.x,g.y,g.w,g.h,8);X.stroke();X.fillStyle='rgba(255,213,74,'+(.12+.08*Math.sin(t*7))+')';X.fill()}}
   for(const p of pops)drawPop(p);
@@ -717,7 +844,7 @@ function draw(t){
 }
 
 /* ---------- levels, achievements, events, fridge, coins ---------- */
-const LVUN={2:'قصب بليمون + ليمون طازة + عامل مساعد',3:'قصب ساقع + تلج أكتر + عصّارة تانية',4:'الثلاجة + لافتة أحلى + ماكينة حاسبة',5:'المروحة + كراسي + كوباية كبيرة'};
+const LVUN={2:'قصب بليمون + ليمون طازة + عامل مساعد',3:'قصب ساقع + تلج أكتر + عصّارة تانية + سندوتش فول',4:'الثلاجة + لافتة أحلى + ماكينة حاسبة',5:'المروحة + كراسي + كوباية كبيرة + سندوتش بطاطس'};
 function lvCheck(){const L=level();while(S.lvSeen<L){S.lvSeen++;toast(tt('star','مستوى جديد '+S.lvSeen,LVUN[S.lvSeen]||'كمّل وهتفتح حاجات جديدة'),3200);snd('level')}}
 const upTotal=()=>Object.values(S.u).reduce((a,b)=>a+b,0);
 const ACH=[
@@ -732,7 +859,10 @@ const ACH=[
  {id:'up1',n:'أول تطوير',d:'اشتري أي تطوير',f:()=>upTotal()>=1},
  {id:'rush',n:'نجم الذروة',d:'خلّص ساعة ذروة',f:()=>S.rushes>=1},
  {id:'hag',n:'فصّال',d:'قابل زبون بيساوم',f:()=>S.haggles>=1},
- {id:'m500',n:'نص ألف',d:'اكسب 500 جنيه إجمالي',f:()=>S.earned>=500}];
+ {id:'m500',n:'نص ألف',d:'اكسب 500 جنيه إجمالي',f:()=>S.earned>=500},
+ {id:'s1',n:'أول سندوتش',d:'بيع أول سندوتش',f:()=>(S.by.fool||0)+(S.by.fries||0)>=1},
+ {id:'s25',n:'اسطى السندوتشات',d:'بيع 25 سندوتش',f:()=>(S.by.fool||0)+(S.by.fries||0)>=25},
+ {id:'stk',n:'مخزن عامر',d:'املأ مخزن كل المكونات',f:()=>sandOpen()&&ING_ORDER.every(k=>S.ing[k]>=stCap())}];
 function checkAch(){for(const a of ACH)if(!S.ach[a.id]&&a.f()){S.ach[a.id]=1;toast(tt('trophy','إنجاز جديد: '+a.n,a.d));snd('ach')}}
 function extra(dt){
   if(S.sold>=10){
@@ -756,7 +886,8 @@ function drawCoins(){for(const c of coins){if(c.t<0)continue;const p=c.t/c.d,e=p
 const UP=[{k:'juice',n:'سرعة العصارة',b:40,lv:1},{k:'speed',n:'سرعة العامل',b:60,lv:1},{k:'price',n:'سعر الكوب',b:50,lv:1},{k:'fridge',n:'ثلاجة كوبايات جاهزة',b:120,lv:4,max:3},{k:'fan',n:'مروحة (صبر الزباين)',b:70,lv:5,max:5},
 {k:'lemon',n:'ليمون طازة',d:'سعر وبقشيش بليمون',b:80,lv:2,max:5},{k:'ice',n:'تلج أكتر',d:'سعر وصبر الساقع',b:100,lv:3,max:5},{k:'juice2',n:'عصّارة تانية',d:'عصر أسرع بكتير',b:150,lv:3,max:4},
 {k:'sign',n:'لافتة أحلى',d:'زباين أكتر',b:130,lv:4,max:5},{k:'reg',n:'ماكينة حاسبة',d:'بقشيش أكتر',b:140,lv:4,max:5},{k:'seats',n:'كراسي الزباين',d:'مكان زيادة في الطابور',b:200,lv:5,max:1},{k:'big',n:'كوباية كبيرة',d:'حجم كبير بسعر أعلى',b:250,lv:5,max:1},
-{k:'hire',n:'عامل مساعد',d:'بيخدم طابور لوحده',b:300,lv:2,max:2}];
+{k:'hire',n:'عامل مساعد',d:'بيخدم طابور لوحده',b:300,lv:2,max:2},
+{k:'store',n:'مخزن المكونات',d:'سعة أكبر لكل مكون',b:120,lv:3,max:3}];
 const cost=u=>Math.floor(u.b*Math.pow(1.7,S.u[u.k]));
 UP.forEach(u=>{const b=document.createElement('button');b.className='up';b.innerHTML='<span></span><small></small>';b.onclick=()=>{if(level()<u.lv||(u.max&&S.u[u.k]>=u.max))return;const c=cost(u);if(S.money>=c){S.money-=c;S.u[u.k]++;if(u.k==='hire')buildBG();save();refresh();snd('up');checkAch()}};$('shop').appendChild(b);u.el=b});
 function refresh(){
@@ -766,32 +897,46 @@ function refresh(){
 }
 
 const Z={cane:{x:332,y:80,w:54,h:70},machine:{x:205,y:62,w:70,h:64},cups:{x:276,y:86,w:56,h:38},counter:{x:250,y:204,w:170,h:84}};
+Object.assign(Z,{board:{x:258,y:WY(14),w:78,h:42},sdb:{x:206,y:WY(56),w:58,h:74},sdfl:{x:242,y:WY(156),w:28,h:36},sdfr:{x:273,y:WY(156),w:28,h:36},sds:{x:266,y:WY(56),w:58,h:74},sdt:{x:326,y:WY(56),w:56,h:74},sdp:{x:306,y:WY(156),w:66,h:52}});
 function talking(){const t=Wk.task;if(!t)return false;const c=t.c;if(c.hag&&c.hag.st!=='done')return true;return !!(isPrice(c)&&c.chat&&c.chat.t<c.chat.total)}
 function target(){const t=Wk.task;
   if(t&&talking())return{z:null,m:t.c.hag&&t.c.hag.st!=='done'?'الزبون بيساوم... استنى واختار من الشات':'الزبون بيسأل... استنى لما يخلص كلامه'};
   if(!t){const c=qList().find(c=>c.ready);return c?{z:{x:c.x-26,y:c.y-82,w:52,h:90},m:'اضغط على طلب الزبون لتبدأ'}:{z:null,m:'بانتظار الزبائن...'}}
   if(t.s===20)return{z:null,m:FS.by&&FS.by!==Wk?'الثلاجة مشغولة... العامل مستني دوره':'العامل رايح الثلاجة يجيب الطلب...'};
   if(t.s===21)return{z:null,m:'العامل بياخد من الثلاجة...'};
+  if(t.sd){const g=stgOf(t.c.item,t.p||0);
+    if(t.s===30)return{z:null,m:swWhy(t.c.item)};
+    if(t.s===31)return{z:szone(t.c.item,t.p),m:g.t};
+    if(t.s===32){const o=SO[g.spot];return{z:null,m:o&&o!==Wk?'العامل مستني دور المحطة...':'العامل '+g.g+'...'}}
+    if(t.s===33)return{z:null,m:'العامل '+g.d+'...'};
+    if(t.s===34)return{z:null,m:'خلص '+ING[g.ing].n+'، اشتريه من القايمة'};
+    if(t.s===39)return{z:null,m:'العامل رايح يسلّم الطلب...'}}
   const k={1:['cane',FD(t.c.item)?'اضغط على صندوق الفاكهة':'اضغط على القصب'],4:['machine','اضغط على ماكينة العصير'],7:['cups','اضغط على طاولة الأكواب'],10:['counter','اضغط على الكاونتر لتسليم الطلب']}[t.s];
   if(k)return{z:Z[k[0]],m:k[1]};
   return{z:null,m:t.s===6?'العصير قيد التجهيز...':'جاري التنفيذ...'}}
 function tap(x,y){const w=Wk,t=w.task,h=z=>x>=z.x&&x<=z.x+z.w&&y>=z.y&&y<=z.y+z.h;
-  if(!t){const c=qList().find(c=>c.ready&&h({x:c.x-26,y:c.y-82,w:52,h:90}));if(c){w.item=c.item;if(cold(c.item))w.task={c,s:20,w:0};else if(S.stock>0){S.stock--;FR.t=0;w.carry='cup';w.task={c,s:10,w:0,fs:true}}else w.task={c,s:1,w:0};startChat(c)}return}
+  if(h(Z.board)){openMenu(true);return}
+  if(!t){const c=qList().find(c=>c.ready&&h({x:c.x-26,y:c.y-82,w:52,h:90}));if(c){w.item=c.item;if(ITEMS[c.item].sand)w.task={c,s:30,sd:true,p:0,w:0};else if(cold(c.item))w.task={c,s:20,w:0};else if(S.stock>0){S.stock--;FR.t=0;w.carry='cup';w.task={c,s:10,w:0,fs:true}}else w.task={c,s:1,w:0};startChat(c)}return}
   if(talking())return;
-  if(t.s===1&&h(Z.cane))t.s=2;else if(t.s===4&&h(Z.machine))t.s=5;else if(t.s===7&&h(Z.cups))t.s=8;else if(t.s===10&&h(Z.counter))t.s=11}
+  if(t.s===1&&h(Z.cane))t.s=2;else if(t.s===4&&h(Z.machine))t.s=5;else if(t.s===7&&h(Z.cups))t.s=8;else if(t.s===10&&h(Z.counter))t.s=t.sd?39:11;else if(t.sd&&t.s===31&&h(szone(t.c.item,t.p)))t.s=32}
 C.addEventListener('pointerdown',ev=>{const r=C.getBoundingClientRect();tap((ev.clientX-r.left)/r.width*W,(ev.clientY-r.top)/r.height*TH-DY)});
 $('btnUpgrades').addEventListener('click',()=>{refresh();$('upgradesOverlay').classList.add('show')});
 $('upgradesClose').addEventListener('click',()=>{$('upgradesOverlay').classList.remove('show')});
 $('upgradesOverlay').addEventListener('click',ev=>{if(ev.target===$('upgradesOverlay'))$('upgradesOverlay').classList.remove('show')});
-function openMenu(){const note='<p style="font-size:12px;margin:2px 0 8px;opacity:.85">مشروبات الفاكهة ليها تكلفة إنتاج بتتخصم من كل كوباية، والرقم اللي بيظهر بعد البيع هو الصافي.</p>';
-  $('menuList').innerHTML=Object.keys(ITEMS).map(k=>{const m=ITEMS[k];
+function openMenu(go){const note='<p style="font-size:12px;margin:2px 0 8px;opacity:.85">مشروبات الفاكهة ليها تكلفة إنتاج بتتخصم من كل كوباية، والرقم اللي بيظهر بعد البيع هو الصافي.</p>';
+  $('menuList').innerHTML=Object.keys(ITEMS).filter(k=>!ITEMS[k].sand).map(k=>{const m=ITEMS[k];
     if(!m.cost){const lk=m.lv>level();return '<div class="menu-row'+(lk?' lock':'')+'"><span>'+ic(lk?'lock':m.i,22)+m.n+'</span><b>'+(lk?'مستوى '+m.lv:itemPrice(k)+' ج')+'</b></div>'}
     const pr=itemPrice(k),pc=Math.round(price()*m.cm),info='بيع '+pr+' • تكلفة '+pc+' • صافي '+(pr-pc)+' • عصر '+(juiceTime()*m.jt).toFixed(1)+' ث';
     if(S.dr[k])return '<div class="menu-row"><span style="flex:1;min-width:0">'+ic(m.i,22)+'<span class="at" style="display:flex;flex-direction:column;min-width:0">'+m.n+'<small>'+info+'</small></span></span><b style="flex:none">'+ic('check',18)+'</b></div>';
     const prev=m.need&&!S.dr[m.need],lvl=level()<m.lv,why=prev?'افتح '+ITEMS[m.need].n+' الأول':lvl?'يفتح في مستوى '+m.lv:'',ok=!prev&&!lvl;
-    return '<div class="menu-row'+(ok?'':' lock')+'"><span style="flex:1;min-width:0">'+ic('lock',22)+'<span class="at" style="display:flex;flex-direction:column;min-width:0">'+m.n+'<small>'+(why||info)+'</small></span></span>'+(ok?'<button class="wbuy" style="flex:none;white-space:nowrap" data-buy="'+k+'" data-c="'+m.cost+'"'+(S.money<m.cost?' disabled':'')+'>افتح بـ '+m.cost+' ج</button>':'<b style="flex:none">'+m.cost+' ج</b>')+'</div>'}).join('')+'<div class="menu-row lock"><span>'+ic('lock',20)+'أصناف جديدة</span><b>قريباً</b></div>'+note;$('menuOverlay').classList.add('show')}
-function menuTick(){if(!$('menuOverlay').classList.contains('show'))return;document.querySelectorAll('#menuList .wbuy[data-c]').forEach(b=>{b.disabled=S.money<+b.dataset.c})}
-$('menuList').addEventListener('click',ev=>{const b=ev.target.closest('.wbuy[data-buy]');if(!b||b.disabled)return;const k=b.dataset.buy,m=ITEMS[k];
+    return '<div class="menu-row'+(ok?'':' lock')+'"><span style="flex:1;min-width:0">'+ic('lock',22)+'<span class="at" style="display:flex;flex-direction:column;min-width:0">'+m.n+'<small>'+(why||info)+'</small></span></span>'+(ok?'<button class="wbuy" style="flex:none;white-space:nowrap" data-buy="'+k+'" data-c="'+m.cost+'"'+(S.money<m.cost?' disabled':'')+'>افتح بـ '+m.cost+' ج</button>':'<b style="flex:none">'+m.cost+' ج</b>')+'</div>'}).join('')+sandMenu()+'<div class="menu-row lock"><span>'+ic('lock',20)+'أصناف جديدة</span><b>قريباً</b></div>'+note;MS.sig=ingSig();$('menuOverlay').classList.add('show');if(go){const a=$('stkAnchor'),pn=$('menuList').closest('.panel');if(a&&pn)pn.scrollTop=a.offsetTop-pn.offsetTop-6}}
+function menuTick(){if(!$('menuOverlay').classList.contains('show'))return;if(MS.sig!==ingSig()){const pn=$('menuList').closest('.panel'),st=pn?pn.scrollTop:0;openMenu();if(pn)pn.scrollTop=st}document.querySelectorAll('#menuList .wbuy[data-c]').forEach(b=>{b.disabled=S.money<+b.dataset.c})}
+$('menuList').addEventListener('click',ev=>{const sb=ev.target.closest('.wbuy[data-sand]'),ab=ev.target.closest('.wbuy[data-add]');
+  if(sb||ab){if((sb||ab).disabled)return;const pn=$('menuList').closest('.panel'),st=pn?pn.scrollTop:0;
+    if(sb){const k=sb.dataset.sand,m=ITEMS[k];if(!m||!m.sand||S.dr[k]||level()<m.lv||S.money<m.ucost)return;S.money-=m.ucost;S.dr[k]=1;for(const i of m.ing)S.ing[i]=Math.max(S.ing[i],6);save();refresh();snd('up');toast(tt(m.i,'اتفتح: '+m.n,'اتحط مخزون أولي، وتابع المكونات من القايمة'),3200);checkAch()}
+    else{const a=ab.dataset.add.split(':');buyIng(a[0],a[1]==='max'?99:+a[1])}
+    openMenu();if(pn)pn.scrollTop=st;return}
+  const b=ev.target.closest('.wbuy[data-buy]');if(!b||b.disabled)return;const k=b.dataset.buy,m=ITEMS[k];
   if(!m||!m.cost||S.dr[k]||level()<m.lv||(m.need&&!S.dr[m.need])||S.money<m.cost)return;
   S.money-=m.cost;S.dr[k]=1;save();refresh();snd('up');toast(tt(m.i,'اتفتح: '+m.n,'الزباين هيبدأوا يطلبوه'),2800);checkAch();
   const pn=$('menuList').closest('.panel'),st=pn?pn.scrollTop:0;openMenu();if(pn)pn.scrollTop=st});
@@ -816,7 +961,8 @@ $('achClose').addEventListener('click',()=>{$('achOverlay').classList.remove('sh
 $('achOverlay').addEventListener('click',ev=>{if(ev.target===$('achOverlay'))$('achOverlay').classList.remove('show')});
 $('hagYes').addEventListener('click',()=>hagChoose(true));
 $('hagNo').addEventListener('click',()=>hagChoose(false));
-$('btnMenu').addEventListener('click',openMenu);
+$('btnMenu').addEventListener('click',()=>openMenu());
+$('hint').addEventListener('click',()=>{if($('hint').classList.contains('act'))openMenu(true)});
 $('menuClose').addEventListener('click',()=>{$('menuOverlay').classList.remove('show')});
 $('menuOverlay').addEventListener('click',ev=>{if(ev.target===$('menuOverlay'))$('menuOverlay').classList.remove('show')});
 function closeTut(){$('tutorialOverlay').classList.remove('show');try{localStorage.setItem('gaan_tut_v1','1')}catch(e){}}
@@ -829,7 +975,7 @@ let last=0;
 function loop(n){
   if(!last)last=n;
   const dt=Math.max(0,Math.min(.05,(n-last)/1000));last=n;
-  try{update(dt);chatTick(dt);draw(n/1000);hudT+=dt;if(hudT>.2){hudT=0;refresh();wkTick();menuTick();$('hint').textContent=target().m}}catch(e){console.error(e)}
+  try{update(dt);chatTick(dt);draw(n/1000);hudT+=dt;if(hudT>.2){hudT=0;refresh();wkTick();menuTick();{const hm=target().m,he=$('hint');he.textContent=hm;he.classList.toggle('act',hm.indexOf('اشتريه من القايمة')>=0)}}}catch(e){console.error(e)}
   requestAnimationFrame(loop);
 }
 requestAnimationFrame(loop);
